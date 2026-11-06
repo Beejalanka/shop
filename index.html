@@ -1,0 +1,322 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FreshMart | Online Supermarket Sri Lanka</title>
+
+    <meta name="description"
+          content="Shop groceries, fresh vegetables, fruits, beverages and household essentials online in Sri Lanka.">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;500;600;700;800;900&display=swap"
+          rel="stylesheet">
+</head>
+
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+    Free delivery offers on selected orders | Fresh products delivered to your door
+</div>
+
+<!-- HEADER -->
+<header class="main-header">
+
+    <a href="index.html" class="logo">
+        <span class="logo-icon">🛒</span>
+        <span>Fresh<span class="logo-green">Mart</span></span>
+    </a>
+
+    <div class="search-box">
+        <input type="text" id="searchInput"
+               placeholder="Search groceries, vegetables, fruits...">
+        <button id="searchBtn">🔍</button>
+    </div>
+
+    <div class="header-actions">
+        <a href="pages/login.html">👤 Account</a>
+
+        <a href="pages/cart.html" class="cart-link">
+            🛒 Cart
+            <span id="cartCount">0</span>
+        </a>
+    </div>
+
+</header>
+
+<!-- NAVIGATION -->
+<nav class="navigation">
+
+    <button class="category-button" id="categoryToggle">
+        ☰ All Categories
+    </button>
+
+    <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="#categories">Categories</a>
+        <a href="#products">Shop Now</a>
+        <a href="#deals">Special Offers</a>
+        <a href="#footer">Contact</a>
+    </div>
+
+</nav>
+
+<!-- MAIN BANNER -->
+<section class="hero">
+
+    <div class="hero-content">
+        <span class="hero-label">YOUR DAILY SHOPPING PARTNER</span>
+
+        <h1>Fresh Products.<br>
+            Better Living.</h1>
+
+        <p>
+            Shop your everyday essentials, fresh fruits,
+            vegetables and groceries at great prices.
+        </p>
+
+        <a href="#products" class="shop-button">
+            Shop Now →
+        </a>
+    </div>
+
+    <div class="hero-image">
+        🥬 🥑 🍎 🥕
+    </div>
+
+</section>
+
+<!-- SERVICE FEATURES -->
+<section class="service-features">
+
+    <div class="service-item">
+        <span>🚚</span>
+        <div>
+            <strong>Fast Delivery</strong>
+            <small>Delivered to your doorstep</small>
+        </div>
+    </div>
+
+    <div class="service-item">
+        <span>🥬</span>
+        <div>
+            <strong>Fresh Products</strong>
+            <small>Quality products every day</small>
+        </div>
+    </div>
+
+    <div class="service-item">
+        <span>💳</span>
+        <div>
+            <strong>Secure Payments</strong>
+            <small>Convenient payment options</small>
+        </div>
+    </div>
+
+    <div class="service-item">
+        <span>⭐</span>
+        <div>
+            <strong>Best Prices</strong>
+            <small>Great value for your money</small>
+        </div>
+    </div>
+
+</section>
+
+<!-- CATEGORIES -->
+<section class="section" id="categories">
+
+    <div class="section-heading">
+        <div>
+            <h2>Shop By Category</h2>
+            <p>Explore our supermarket collections</p>
+        </div>
+    </div>
+
+    <div class="category-grid">
+
+        <button class="category-card" data-category="Vegetables">
+            <span>🥦</span>
+            <strong>Vegetables</strong>
+        </button>
+
+        <button class="category-card" data-category="Fruits">
+            <span>🍎</span>
+            <strong>Fruits</strong>
+        </button>
+
+        <button class="category-card" data-category="Grocery">
+            <span>🍚</span>
+            <strong>Grocery</strong>
+        </button>
+
+        <button class="category-card" data-category="Dairy">
+            <span>🥛</span>
+            <strong>Dairy Products</strong>
+        </button>
+
+        <button class="category-card" data-category="Beverages">
+            <span>🥤</span>
+            <strong>Beverages</strong>
+        </button>
+
+        <button class="category-card" data-category="Snacks">
+            <span>🍪</span>
+            <strong>Snacks</strong>
+        </button>
+
+        <button class="category-card" data-category="Personal Care">
+            <span>🧴</span>
+            <strong>Personal Care</strong>
+        </button>
+
+        <button class="category-card" data-category="Household">
+            <span>🧹</span>
+            <strong>Household</strong>
+        </button>
+
+    </div>
+
+</section>
+
+<!-- SPECIAL OFFER -->
+<section class="offer-banner" id="deals">
+
+    <div>
+        <span>SPECIAL SHOPPING DEALS</span>
+        <h2>Great Deals for Everyday Needs!</h2>
+        <p>Discover amazing offers on selected products.</p>
+        <a href="#products">Explore Offers →</a>
+    </div>
+
+    <div class="offer-icon">🛍️</div>
+
+</section>
+
+<!-- PRODUCTS -->
+<section class="section" id="products">
+
+    <div class="section-heading product-heading">
+
+        <div>
+            <h2>Popular Products</h2>
+            <p>Discover our everyday essentials</p>
+        </div>
+
+        <select id="sortProducts">
+            <option value="default">Sort By: Featured</option>
+            <option value="low">Price: Low to High</option>
+            <option value="high">Price: High to Low</option>
+            <option value="name">Name: A to Z</option>
+        </select>
+
+    </div>
+
+    <div class="shop-layout">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <h3>Categories</h3>
+
+            <button class="filter-category active"
+                    data-category="All">All Products</button>
+
+            <button class="filter-category"
+                    data-category="Vegetables">Vegetables</button>
+
+            <button class="filter-category"
+                    data-category="Fruits">Fruits</button>
+
+            <button class="filter-category"
+                    data-category="Grocery">Grocery</button>
+
+            <button class="filter-category"
+                    data-category="Dairy">Dairy Products</button>
+
+            <button class="filter-category"
+                    data-category="Beverages">Beverages</button>
+
+            <button class="filter-category"
+                    data-category="Snacks">Snacks</button>
+
+            <button class="filter-category"
+                    data-category="Personal Care">Personal Care</button>
+
+            <button class="filter-category"
+                    data-category="Household">Household</button>
+
+            <div class="sidebar-divider"></div>
+
+            <h3>Price Filter</h3>
+
+            <label>Minimum Price (Rs.)</label>
+            <input type="number" id="minPrice" value="0" min="0">
+
+            <label>Maximum Price (Rs.)</label>
+            <input type="number" id="maxPrice" value="10000" min="0">
+
+            <button id="applyFilter" class="filter-button">
+                Apply Filter
+            </button>
+
+        </aside>
+
+        <!-- PRODUCT GRID -->
+        <div class="product-area">
+
+            <div class="product-grid" id="productGrid">
+                <!-- Products loaded by JavaScript -->
+            </div>
+
+            <p id="noProducts" class="no-products" hidden>
+                No products found.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- FOOTER -->
+<footer id="footer">
+
+    <div class="footer-content">
+
+        <div>
+            <h2>Fresh<span>Mart</span></h2>
+            <p>Your trusted online supermarket in Sri Lanka.</p>
+        </div>
+
+        <div>
+            <h3>Quick Links</h3>
+            <a href="index.html">Home</a>
+            <a href="#categories">Categories</a>
+            <a href="#products">Products</a>
+        </div>
+
+        <div>
+            <h3>Customer Service</h3>
+            <a href="#">Contact Us</a>
+            <a href="#">Delivery Information</a>
+            <a href="#">Privacy Policy</a>
+        </div>
+
+    </div>
+
+    <div class="copyright">
+        © 2026 FreshMart. All Rights Reserved.
+    </div>
+
+</footer>
+
+<script src="script.js"></script>
+
+</body>
+</html>
