@@ -57,12 +57,7 @@ button, input, select {
     white-space: nowrap;
 }
 
-.logo img {
-    width: 120px;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 5%;
-}
+
 
 .logo-icon {
     font-size: 30px;
