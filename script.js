@@ -1,134 +1,12 @@
 
 // ======================================
-// FRESHMART - SUPERMARKET WEBSITE
+// BEEJA.LK - GOOGLE SHEETS PRODUCT SYSTEM
 // ======================================
 
+const GOOGLE_SHEETS_API =
+"https://script.google.com/macros/s/AKfycbzHjRl2lrsZz2_s0Ago1f_F-kFoXvBfsw-tokbhoHV_z_Y0woziBN3BH65zEohfNCCmew/exec";
 
-// PRODUCT DATABASE
-const products = [
-
-    {
-        id: 1,
-        name: "Fresh Red Apples 1kg",
-        category: "Fruits",
-        price: 1250,
-        oldPrice: 1450,
-        image: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=500",
-        discount: "14%"
-    },
-
-    {
-        id: 2,
-        name: "Fresh Broccoli 500g",
-        category: "Vegetables",
-        price: 650,
-        oldPrice: 750,
-        image: "https://images.unsplash.com/photo-1459411552884-841db9b3cc2a?w=500",
-        discount: "13%"
-    },
-
-    {
-        id: 3,
-        name: "Fresh Milk 1L",
-        category: "Dairy",
-        price: 450,
-        oldPrice: 500,
-        image: "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=500",
-        discount: "10%"
-    },
-
-    {
-        id: 4,
-        name: "White Basmati Rice 1kg",
-        category: "Grocery",
-        price: 420,
-        oldPrice: 480,
-        image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=500",
-        discount: "12%"
-    },
-
-    {
-        id: 5,
-        name: "Fresh Bananas 1kg",
-        category: "Fruits",
-        price: 350,
-        oldPrice: 400,
-        image: "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=500",
-        discount: "12%"
-    },
-
-    {
-        id: 6,
-        name: "Fresh Carrots 500g",
-        category: "Vegetables",
-        price: 280,
-        oldPrice: 320,
-        image: "https://images.unsplash.com/photo-1445282768818-728615cc910a?w=500",
-        discount: "13%"
-    },
-
-    {
-        id: 7,
-        name: "Orange Juice 1L",
-        category: "Beverages",
-        price: 650,
-        oldPrice: 750,
-        image: "https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=500",
-        discount: "13%"
-    },
-
-    {
-        id: 8,
-        name: "Chocolate Cookies",
-        category: "Snacks",
-        price: 450,
-        oldPrice: 500,
-        image: "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=500",
-        discount: "10%"
-    },
-
-    {
-        id: 9,
-        name: "Fresh Strawberries 250g",
-        category: "Fruits",
-        price: 950,
-        oldPrice: 1100,
-        image: "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=500",
-        discount: "14%"
-    },
-
-    {
-        id: 10,
-        name: "Fresh Eggs 10 Pack",
-        category: "Dairy",
-        price: 650,
-        oldPrice: 700,
-        image: "https://images.unsplash.com/photo-1506976785307-8732e854ad03?w=500",
-        discount: "7%"
-    },
-
-    {
-        id: 11,
-        name: "Dishwashing Liquid",
-        category: "Household",
-        price: 550,
-        oldPrice: 650,
-        image: "https://images.unsplash.com/photo-1585421514738-01798e348b17?w=500",
-        discount: "15%"
-    },
-
-    {
-        id: 12,
-        name: "Shampoo 180ml",
-        category: "Personal Care",
-        price: 750,
-        oldPrice: 850,
-        image: "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=500",
-        discount: "12%"
-    }
-
-];
-
+let products = [];
 
 // ======================================
 // CART DATA
@@ -149,7 +27,6 @@ try {
     cart = [];
 }
 
-
 // ======================================
 // GLOBAL FILTERS
 // ======================================
@@ -157,6 +34,122 @@ try {
 let selectedCategory = "All";
 let searchText = "";
 
+// ======================================
+// IMAGE URL
+// ======================================
+
+function getImageUrl(image) {
+
+    if (!image) return "";
+
+    image = String(image).trim();
+
+    const match = image.match(
+        /drive\.google\.com\/file\/d\/([^/?]+)/
+    );
+
+    if (match) {
+        return "https://drive.google.com/uc?export=view&id=" + match[1];
+    }
+
+    return image;
+}
+
+// ======================================
+// LOAD PRODUCTS FROM GOOGLE SHEETS
+// ======================================
+
+function loadProducts() {
+
+    const productGrid =
+        document.getElementById("productGrid");
+
+    if (productGrid) {
+        productGrid.innerHTML = "<p>Loading products...</p>";
+    }
+
+    window.receiveGoogleSheetProducts = function(data) {
+
+        if (!Array.isArray(data)) {
+            showError("Invalid product data from Google Sheets.");
+            return;
+        }
+
+        products = data
+
+            .filter(row => row.id !== "" && row.id != null)
+
+            .map(row => ({
+
+                id: Number(row.id),
+
+                name: String(row.name || ""),
+
+                category: String(row.category || ""),
+
+                price: Number(row.price) || 0,
+
+                oldPrice: Number(row.oldPrice) || 0,
+
+                image: getImageUrl(row.image),
+
+                discount: String(row.discount || ""),
+
+                stock: Number(row.stock) || 0
+
+            }));
+
+        displayProducts();
+
+        console.log("Google Sheets Products Loaded:", products);
+    };
+
+    const oldScript = document.getElementById(
+        "googleSheetsScript"
+    );
+
+    if (oldScript) oldScript.remove();
+
+    const script = document.createElement("script");
+
+    script.id = "googleSheetsScript";
+
+    script.src =
+        GOOGLE_SHEETS_API +
+        "?callback=receiveGoogleSheetProducts&t=" +
+        Date.now();
+
+    script.onerror = function() {
+        showError("Google Sheets connection failed.");
+    };
+
+    document.body.appendChild(script);
+
+    setTimeout(() => {
+
+        if (products.length === 0) {
+            showError("No products loaded. Check Google Sheets connection.");
+        }
+
+    }, 20000);
+}
+
+// ======================================
+// ERROR MESSAGE
+// ======================================
+
+function showError(message) {
+
+    const productGrid =
+        document.getElementById("productGrid");
+
+    if (productGrid) {
+        productGrid.innerHTML =
+            "<p>" + message + "</p>";
+    }
+
+    console.error(message);
+}
 
 // ======================================
 // DISPLAY PRODUCTS
@@ -174,18 +167,17 @@ function displayProducts() {
 
     let filteredProducts = [...products];
 
-
     // CATEGORY FILTER
 
     if (selectedCategory !== "All") {
 
         filteredProducts = filteredProducts.filter(
             product =>
-                product.category === selectedCategory
+                product.category.toLowerCase() ===
+                selectedCategory.toLowerCase()
         );
 
     }
-
 
     // SEARCH FILTER
 
@@ -193,23 +185,22 @@ function displayProducts() {
 
         filteredProducts = filteredProducts.filter(
             product =>
-                product.name.toLowerCase().includes(searchText)
+                product.name.toLowerCase().includes(searchText) ||
+                product.category.toLowerCase().includes(searchText)
         );
 
     }
 
-
     // PRICE FILTER
 
     const minPrice =
-        Number(document.getElementById("minPrice").value) || 0;
+        Number(document.getElementById("minPrice")?.value) || 0;
 
     const maxInput =
-        document.getElementById("maxPrice").value;
+        document.getElementById("maxPrice")?.value || "";
 
     const maxPrice =
         maxInput === "" ? Infinity : Number(maxInput);
-
 
     filteredProducts = filteredProducts.filter(
         product =>
@@ -217,11 +208,10 @@ function displayProducts() {
             product.price <= maxPrice
     );
 
-
     // SORT PRODUCTS
 
     const sortValue =
-        document.getElementById("sortProducts").value;
+        document.getElementById("sortProducts")?.value || "default";
 
     if (sortValue === "low") {
 
@@ -247,8 +237,7 @@ function displayProducts() {
 
     }
 
-
-    // EMPTY RESULT
+    // NO PRODUCTS
 
     if (filteredProducts.length === 0) {
 
@@ -256,22 +245,28 @@ function displayProducts() {
 
         noProducts.hidden = false;
 
-        return;
+        noProducts.textContent = "No products found.";
 
+        return;
     }
 
     noProducts.hidden = true;
 
+    // PRODUCT CARDS
 
-    // PRODUCT HTML
+    productGrid.innerHTML = filteredProducts.map(product => {
 
-    productGrid.innerHTML = filteredProducts.map(product => `
+        const outOfStock = product.stock <= 0;
+
+        return `
 
         <div class="product-card">
 
-            <span class="discount">
-                ${product.discount} OFF
-            </span>
+            ${product.discount ? `
+                <span class="discount">
+                    ${product.discount} OFF
+                </span>
+            ` : ""}
 
             <div class="product-image">
 
@@ -300,17 +295,29 @@ function displayProducts() {
                         Rs. ${product.price.toLocaleString("en-LK")}
                     </span>
 
-                    <span class="product-old-price">
-                        Rs. ${product.oldPrice.toLocaleString("en-LK")}
-                    </span>
+                    ${product.oldPrice > 0 ? `
+                        <span class="product-old-price">
+                            Rs. ${product.oldPrice.toLocaleString("en-LK")}
+                        </span>
+                    ` : ""}
 
                 </div>
 
+                <p class="product-stock">
+                    ${outOfStock
+                        ? "Out of Stock"
+                        : "In Stock: " + product.stock}
+                </p>
+
                 <button
                     class="add-cart"
-                    onclick="addToCart(${product.id})">
+                    onclick="addToCart(${product.id})"
+                    ${outOfStock ? "disabled" : ""}
+                >
 
-                    + Add to Cart
+                    ${outOfStock
+                        ? "Out of Stock"
+                        : "+ Add to Cart"}
 
                 </button>
 
@@ -318,10 +325,11 @@ function displayProducts() {
 
         </div>
 
-    `).join("");
+        `;
+
+    }).join("");
 
 }
-
 
 // ======================================
 // ADD TO CART
@@ -330,27 +338,47 @@ function displayProducts() {
 function addToCart(productId) {
 
     const product = products.find(
-        item => item.id === productId
+        item => item.id === Number(productId)
     );
 
     if (!product) return;
 
+    if (product.stock <= 0) {
+
+        alert("Product is out of stock!");
+
+        return;
+    }
+
     const existingProduct = cart.find(
-        item => item.id === productId
+        item => Number(item.id) === product.id
     );
 
     if (existingProduct) {
+
+        if (existingProduct.quantity >= product.stock) {
+
+            alert("Maximum available stock reached!");
+
+            return;
+        }
 
         existingProduct.quantity += 1;
 
     } else {
 
         cart.push({
+
             id: product.id,
+
             name: product.name,
+
             price: product.price,
+
             image: product.image,
+
             quantity: 1
+
         });
 
     }
@@ -360,7 +388,6 @@ function addToCart(productId) {
     alert(product.name + " added to cart!");
 
 }
-
 
 // ======================================
 // SAVE CART
@@ -377,7 +404,6 @@ function saveCart() {
 
 }
 
-
 // ======================================
 // UPDATE CART COUNT
 // ======================================
@@ -388,7 +414,8 @@ function updateCartCount() {
         document.getElementById("cartCount");
 
     const totalItems = cart.reduce(
-        (total, item) => total + Number(item.quantity || 0),
+        (total, item) =>
+            total + Number(item.quantity || 0),
         0
     );
 
@@ -397,7 +424,6 @@ function updateCartCount() {
     }
 
 }
-
 
 // ======================================
 // CATEGORY FILTER
@@ -421,8 +447,9 @@ document.querySelectorAll(".filter-category")
 
 });
 
-
+// ======================================
 // CATEGORY CARDS
+// ======================================
 
 document.querySelectorAll(".category-card")
 .forEach(button => {
@@ -444,12 +471,11 @@ document.querySelectorAll(".category-card")
         displayProducts();
 
         document.getElementById("products")
-            .scrollIntoView({ behavior: "smooth" });
+            ?.scrollIntoView({ behavior: "smooth" });
 
     });
 
 });
-
 
 // ======================================
 // SEARCH
@@ -469,46 +495,42 @@ function searchProducts() {
 }
 
 document.getElementById("searchBtn")
-    .addEventListener("click", searchProducts);
+    ?.addEventListener("click", searchProducts);
 
-searchInput.addEventListener("input", searchProducts);
-
+searchInput?.addEventListener("input", searchProducts);
 
 // ======================================
 // SORT PRODUCTS
 // ======================================
 
 document.getElementById("sortProducts")
-    .addEventListener("change", displayProducts);
-
+    ?.addEventListener("change", displayProducts);
 
 // ======================================
 // PRICE FILTER
 // ======================================
 
 document.getElementById("applyFilter")
-    .addEventListener("click", displayProducts);
-
+    ?.addEventListener("click", displayProducts);
 
 // ======================================
-// CATEGORY NAVIGATION BUTTON
+// CATEGORY NAVIGATION
 // ======================================
 
 document.getElementById("categoryToggle")
-    .addEventListener("click", () => {
+    ?.addEventListener("click", () => {
 
         document.getElementById("categories")
-            .scrollIntoView({ behavior: "smooth" });
+            ?.scrollIntoView({ behavior: "smooth" });
 
     });
-
 
 // ======================================
 // INITIALIZE WEBSITE
 // ======================================
 
-displayProducts();
-
 updateCartCount();
 
-console.log("FreshMart Website Loaded Successfully!");
+loadProducts();
+
+console.log("Beeja.LK Website Loaded Successfully!");
