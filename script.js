@@ -93,12 +93,20 @@ function loadProducts() {
 
                 image: getImageUrl(row.image),
 
-                discount: row.discount
-                    ? (Number(row.discount) <= 1
-                        ? Number(row.discount) * 100
-                        : Number(row.discount)) + "%"
-                    : "",
+                discount: (() => {
+                    const value = parseFloat(
+                        String(row.discount || "").replace("%", "")
+                    );
 
+                    if (isNaN(value)) return "";
+
+                    const percentage = value <= 1
+                        ? value * 100
+                        : value;
+
+                    return Math.round(percentage) + "%";
+                })(),
+                
                 stock: Number(row.stock) || 0
 
             }));
