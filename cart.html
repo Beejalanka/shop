@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Shopping Cart - Beeja.LK</title>
+
+    <link rel="stylesheet" href="cart.css">
+</head>
+
+<body>
+
+<header class="cart-header">
+    <a href="../index.html" class="logo">
+        <img src="../images/logo.png" alt="Beeja.LK Logo">
+    </a>
+
+    <a href="../index.html" class="continue-btn">
+        Continue Shopping
+    </a>
+</header>
+
+<main class="cart-container">
+
+    <h1>Shopping Cart</h1>
+
+    <div class="cart-layout">
+
+        <section class="cart-products">
+
+            <div class="cart-title">
+                <h2>Your Products</h2>
+                <button id="clearCartBtn" class="clear-btn">
+                    Clear Cart
+                </button>
+            </div>
+
+            <div id="cartItems"></div>
+
+            <div id="emptyCart" class="empty-cart" hidden>
+                <div class="empty-icon">🛒</div>
+                <h2>Your cart is empty!</h2>
+                <p>Add some products to your shopping cart.</p>
+
+                <a href="../index.html#products">
+                    Start Shopping
+                </a>
+            </div>
+
+        </section>
+
+        <aside class="cart-summary">
+
+            <h2>Order Summary</h2>
+
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <strong id="subtotal">Rs. 0.00</strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Delivery</span>
+                <strong id="delivery">Calculated at checkout</strong>
+            </div>
+
+            <hr>
+
+            <div class="summary-row total-row">
+                <span>Total</span>
+                <strong id="total">Rs. 0.00</strong>
+            </div>
+
+            <a href="checkout.html" class="checkout-btn" id="checkoutBtn">
+                Proceed to Checkout
+            </a>
+
+            <p class="secure-text">Secure Shopping at Beeja.LK</p>
+
+        </aside>
+
+    </div>
+
+</main>
+
+<script src="cart.js"></script>
+
+</body>
+</html>
