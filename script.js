@@ -38,6 +38,7 @@ let searchText = "";
 // IMAGE URL
 // ======================================
 
+
 function getImageUrl(image) {
 
     if (!image) return "";
@@ -54,7 +55,6 @@ function getImageUrl(image) {
 
     return image;
 }
-
 // ======================================
 // LOAD PRODUCTS FROM GOOGLE SHEETS
 // ======================================
