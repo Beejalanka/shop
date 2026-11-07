@@ -578,7 +578,10 @@ footer {
     }
 
     .logo img {
-        width: 100px;
+        width: 100px;    
+        height: 80px;
+        object-fit: cover;
+        border-radius: 5%;
     }
     .search-box {
         width: 100%;
