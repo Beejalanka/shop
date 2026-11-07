@@ -577,6 +577,9 @@ footer {
         font-size: 23px;
     }
 
+    .logo img {
+        width: 120px;
+    }
     .search-box {
         width: 100%;
         order: 3;
