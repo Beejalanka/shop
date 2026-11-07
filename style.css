@@ -61,7 +61,7 @@ button, input, select {
     width: 225px;
     height: 150px;
     object-fit: cover;
-    border-radius: 50%;
+    border-radius: 5%;
 }
 
 .logo-icon {
@@ -578,7 +578,7 @@ footer {
     }
 
     .logo img {
-        width: 120px;
+        width: 100px;
     }
     .search-box {
         width: 100%;
