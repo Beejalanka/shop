@@ -304,9 +304,10 @@ function displayProducts() {
                 </div>
 
                 <p class="product-stock">
-                    ${outOfStock
-                        ? "Out of Stock"
-                        : "In Stock: " + product.stock}
+                  ${outOfStock 
+                    ? "Out of Stock" 
+                    : "In Stock"}
+                    //: "In Stock: " + product.stock}
                 </p>
 
                 <button
