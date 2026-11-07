@@ -311,7 +311,6 @@ function displayProducts() {
                   ${outOfStock 
                     ? "Out of Stock" 
                     : "In Stock"}
-                    //: "In Stock: " + product.stock}
                 </p>
 
                 <button
