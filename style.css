@@ -58,10 +58,10 @@ button, input, select {
 }
 
 .logo img {
-    width: 55px;
-    height: 55px;
+    width: 75px;
+    height: 75px;
     object-fit: cover;
-    border-radius: 50%;
+    border-radius: 5%;
 }
 
 .logo-icon {
