@@ -93,7 +93,11 @@ function loadProducts() {
 
                 image: getImageUrl(row.image),
 
-                discount: String(row.discount || ""),
+                discount: row.discount
+                    ? (Number(row.discount) <= 1
+                        ? Number(row.discount) * 100
+                        : Number(row.discount)) + "%"
+                    : "",
 
                 stock: Number(row.stock) || 0
 
