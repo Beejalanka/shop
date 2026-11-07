@@ -321,17 +321,38 @@ function displayProducts() {
                     : "In Stock"}
                 </p>
 
-                <button
-                    class="add-cart"
-                    onclick="addToCart(${product.id})"
-                    ${outOfStock ? "disabled" : ""}
-                >
+                <div class="quantity-selector">
 
-                    ${outOfStock
-                        ? "Out of Stock"
-                        : "+ Add to Cart"}
+    <button
+        type="button"
+        onclick="changeQuantity(${product.id}, -1)"
+        ${outOfStock ? "disabled" : ""}
+    >−</button>
 
-                </button>
+    <input
+        type="number"
+        id="quantity-${product.id}"
+        value="1"
+        min="1"
+        max="${product.stock}"
+        ${outOfStock ? "disabled" : ""}
+    >
+
+    <button
+        type="button"
+        onclick="changeQuantity(${product.id}, 1)"
+        ${outOfStock ? "disabled" : ""}
+    >+</button>
+
+</div>
+
+<button
+    class="add-cart"
+    onclick="addToCart(${product.id})"
+    ${outOfStock ? "disabled" : ""}
+>
+    ${outOfStock ? "Out of Stock" : "+ Add to Cart"}
+</button>
 
             </div>
 
@@ -342,7 +363,36 @@ function displayProducts() {
     }).join("");
 
 }
+// ======================================
+// CHANGE PRODUCT QUANTITY
+// ======================================
 
+function changeQuantity(productId, change) {
+
+    const product = products.find(
+        item => item.id === Number(productId)
+    );
+
+    const input = document.getElementById(
+        "quantity-" + productId
+    );
+
+    if (!product || !input) return;
+
+    let quantity = Number(input.value) || 1;
+
+    quantity += change;
+
+    if (quantity < 1) {
+        quantity = 1;
+    }
+
+    if (quantity > product.stock) {
+        quantity = product.stock;
+    }
+
+    input.value = quantity;
+}
 // ======================================
 // ADD TO CART
 // ======================================
@@ -356,9 +406,23 @@ function addToCart(productId) {
     if (!product) return;
 
     if (product.stock <= 0) {
-
         alert("Product is out of stock!");
+        return;
+    }
 
+    // GET SELECTED QUANTITY
+
+    const quantityInput = document.getElementById(
+        "quantity-" + productId
+    );
+
+    const quantity = Number(quantityInput?.value);
+
+    if (
+        !Number.isInteger(quantity) ||
+        quantity < 1
+    ) {
+        alert("Please select a valid quantity!");
         return;
     }
 
@@ -366,30 +430,32 @@ function addToCart(productId) {
         item => Number(item.id) === product.id
     );
 
+    const currentQuantity = existingProduct
+        ? Number(existingProduct.quantity)
+        : 0;
+
+    // CHECK AVAILABLE STOCK
+
+    if (currentQuantity + quantity > product.stock) {
+        alert("Not enough stock available!");
+        return;
+    }
+
+    // ADD OR UPDATE CART
+
     if (existingProduct) {
 
-        if (existingProduct.quantity >= product.stock) {
-
-            alert("Maximum available stock reached!");
-
-            return;
-        }
-
-        existingProduct.quantity += 1;
+        existingProduct.quantity += quantity;
 
     } else {
 
         cart.push({
 
             id: product.id,
-
             name: product.name,
-
             price: product.price,
-
             image: product.image,
-
-            quantity: 1
+            quantity: quantity
 
         });
 
@@ -397,8 +463,15 @@ function addToCart(productId) {
 
     saveCart();
 
-    alert(product.name + " added to cart!");
+    alert(
+        product.name + " x " + quantity + " added to cart!"
+    );
 
+    // RESET QUANTITY
+
+    if (quantityInput) {
+        quantityInput.value = 1;
+    }
 }
 
 // ======================================
