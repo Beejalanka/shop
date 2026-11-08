@@ -492,19 +492,14 @@ function startOtpResendTimer() {
 document.getElementById("resendOtpBtn")
     .addEventListener("click", function() {
 
-        document.getElementById("otpVerifyStep").hidden = true;
-
-        document.getElementById("otpEmailStep").hidden = false;
-
-        showMessage("");
-
-        sendPasswordOtp();
+        sendPasswordOtp(
+            document.getElementById("resendOtpBtn")
+        );
 
     });
 
-
 // =======================================
-// VERIFY OTP USING GOOGLE APPS SCRIPT
+// VERIFY OTP
 // =======================================
 
 document.getElementById("verifyOtpBtn")
@@ -520,11 +515,8 @@ document.getElementById("verifyOtpBtn")
             .value.trim();
 
         if (!/^[0-9]{6}$/.test(otp)) {
-
             showMessage("Enter a valid 6-digit OTP.");
-
             return;
-
         }
 
         const button = document.getElementById("verifyOtpBtn");
@@ -532,8 +524,7 @@ document.getElementById("verifyOtpBtn")
         button.disabled = true;
         button.textContent = "Verifying...";
 
-        const callbackName =
-            "beejaOtpCallback_" + Date.now();
+        const callbackName = "beejaVerify_" + Date.now();
 
         const params = new URLSearchParams();
 
@@ -548,29 +539,35 @@ document.getElementById("verifyOtpBtn")
 
         let completed = false;
 
-        function cleanup() {
+        const timeout = setTimeout(function() {
+            finish();
+            showMessage("Request timed out. Please try again.");
+        }, 20000);
+
+        function finish() {
+            if (completed) return;
+
+            completed = true;
+            clearTimeout(timeout);
 
             delete window[callbackName];
-
             script.remove();
 
             button.disabled = false;
             button.textContent = "Verify OTP";
-
         }
 
         window[callbackName] = function(result) {
 
-            completed = true;
+            if (completed) return;
 
-            cleanup();
+            finish();
 
             if (result.success) {
 
                 verifiedEmail = email;
 
                 document.getElementById("otpVerifyStep").hidden = true;
-
                 document.getElementById("newPasswordStep").hidden = false;
 
                 document.getElementById("forgotDescription").textContent =
@@ -582,29 +579,24 @@ document.getElementById("verifyOtpBtn")
                 );
 
             } else {
-
-                showMessage("Invalid or expired OTP.");
-
+                showMessage(result.message || "Invalid or expired OTP.");
             }
-
         };
 
         script.onerror = function() {
 
             if (completed) return;
 
-            cleanup();
+            finish();
 
             showMessage(
                 "OTP verification failed. Please try again."
             );
-
         };
 
         document.body.appendChild(script);
 
     });
-
 
 // =======================================
 // SAVE NEW PASSWORD
