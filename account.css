@@ -98,7 +98,59 @@ body {
 #forgotForm [hidden] {
     display: none !important;
 }
+/* =================================
+   RESEND OTP BUTTON
+================================= */
 
+#resendOtpBtn {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 12px;
+    padding: 13px 20px;
+
+    background: #ffffff;
+    color: #218c45;
+
+    border: 2px solid #218c45;
+    border-radius: 8px;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Hover Effect */
+
+#resendOtpBtn:not(:disabled):hover {
+    background: #218c45;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(33, 140, 69, 0.2);
+}
+
+/* Disabled - Countdown */
+
+#resendOtpBtn:disabled {
+    background: #eeeeee;
+    color: #888888;
+    border-color: #dddddd;
+    cursor: not-allowed;
+    opacity: 0.8;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Mobile Responsive */
+
+@media (max-width: 480px) {
+    #resendOtpBtn {
+        padding: 12px;
+        font-size: 14px;
+    }
+}
 
 /* LOGIN REGISTER BOX */
 
