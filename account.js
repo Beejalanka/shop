@@ -1,8 +1,6 @@
-
 // =======================================
 // BEEJA.LK ACCOUNT SYSTEM
 // =======================================
-
 
 
 // =======================================
@@ -13,7 +11,53 @@ const GOOGLE_SCRIPT_URL =
 "https://script.google.com/macros/s/AKfycbz6qf-zbJnKgY6Xk7QlRsIlR8a8CO5LDAq1ix5Gw9D7I7yZWkZlH03-0XUYyvqOuS22/exec";
 
 
-// SEND DATA TO GOOGLE SHEETS
+// =======================================
+// LOCAL STORAGE KEYS
+// =======================================
+
+const USERS_KEY = "beejaUsers";
+const CURRENT_USER_KEY = "beejaCurrentUser";
+
+
+// =======================================
+// HTML ELEMENTS
+// =======================================
+
+const authBox = document.getElementById("authBox");
+const dashboard = document.getElementById("dashboard");
+
+const loginForm = document.getElementById("loginForm");
+const registerForm = document.getElementById("registerForm");
+const forgotForm = document.getElementById("forgotForm");
+
+const formTitle = document.getElementById("formTitle");
+const formDescription = document.getElementById("formDescription");
+const authMessage = document.getElementById("authMessage");
+
+const forgotEmail = document.getElementById("forgotEmail");
+const otpCode = document.getElementById("otpCode");
+
+const otpEmailStep = document.getElementById("otpEmailStep");
+const otpVerifyStep = document.getElementById("otpVerifyStep");
+const newPasswordStep = document.getElementById("newPasswordStep");
+
+const sendOtpBtn = document.getElementById("sendOtpBtn");
+const resendOtpBtn = document.getElementById("resendOtpBtn");
+const verifyOtpBtn = document.getElementById("verifyOtpBtn");
+const saveNewPasswordBtn = document.getElementById("saveNewPasswordBtn");
+
+
+// =======================================
+// VARIABLES
+// =======================================
+
+let verifiedEmail = "";
+let resendTimer = null;
+
+
+// =======================================
+// GOOGLE SHEETS POST
+// =======================================
 
 function sendToGoogleSheets(data) {
 
@@ -27,116 +71,191 @@ function sendToGoogleSheets(data) {
         method: "POST",
         mode: "no-cors",
         body: formData
-    })
-    .catch(error => {
+    }).catch(error => {
         console.error("Google Sheets error:", error);
     });
 
 }
 
 
-
-
-// Demo front-end account storage
-const USERS_KEY = "beejaUsers";
-const CURRENT_USER_KEY = "beejaCurrentUser";
-
-
-// HTML ELEMENTS
-
-const authBox = document.getElementById("authBox");
-const dashboard = document.getElementById("dashboard");
-
-const loginForm = document.getElementById("loginForm");
-const registerForm = document.getElementById("registerForm");
-
-const formTitle = document.getElementById("formTitle");
-const formDescription = document.getElementById("formDescription");
-
-const authMessage = document.getElementById("authMessage");
-
-
+// =======================================
 // GET USERS
+// =======================================
 
 function getUsers() {
-    return JSON.parse(localStorage.getItem(USERS_KEY)) || [];
+
+    try {
+        return JSON.parse(localStorage.getItem(USERS_KEY)) || [];
+    } catch (error) {
+        console.error("Unable to read users:", error);
+        return [];
+    }
+
 }
 
 
+// =======================================
 // SAVE USERS
+// =======================================
 
 function saveUsers(users) {
     localStorage.setItem(USERS_KEY, JSON.stringify(users));
 }
 
 
+// =======================================
 // GET CURRENT USER
+// =======================================
 
 function getCurrentUser() {
-    return JSON.parse(localStorage.getItem(CURRENT_USER_KEY));
+
+    try {
+        return JSON.parse(localStorage.getItem(CURRENT_USER_KEY));
+    } catch (error) {
+        return null;
+    }
+
 }
 
 
+// =======================================
 // SHOW MESSAGE
+// =======================================
 
 function showMessage(message, color = "#d93025") {
+
     authMessage.textContent = message;
     authMessage.style.color = color;
+
 }
 
 
-// SWITCH TO REGISTER
+// =======================================
+// STOP OTP TIMER
+// =======================================
 
-document.getElementById("showRegister").addEventListener("click", function(e) {
+function stopOtpResendTimer() {
 
-    e.preventDefault();
+    if (resendTimer !== null) {
+        clearInterval(resendTimer);
+        resendTimer = null;
+    }
 
-    loginForm.hidden = true;
-    registerForm.hidden = false;
+    resendOtpBtn.disabled = true;
+    resendOtpBtn.textContent = "Resend OTP";
 
-    formTitle.textContent = "Create Account";
-    formDescription.textContent = "Join Beeja.LK today";
-
-    showMessage("");
-
-});
+}
 
 
-// SWITCH TO LOGIN
+// =======================================
+// SHOW LOGIN PAGE
+// =======================================
 
-document.getElementById("showLogin").addEventListener("click", function(e) {
+function showLoginPage() {
 
-    e.preventDefault();
+    stopOtpResendTimer();
 
-    registerForm.hidden = true;
+    dashboard.hidden = true;
+    authBox.hidden = false;
+
     loginForm.hidden = false;
+    registerForm.hidden = true;
+    forgotForm.hidden = true;
+
+    document.getElementById("editProfile").hidden = true;
+
+    loginForm.reset();
+    registerForm.reset();
+    forgotForm.reset();
+
+    otpEmailStep.hidden = false;
+    otpVerifyStep.hidden = true;
+    newPasswordStep.hidden = true;
 
     formTitle.textContent = "Welcome Back!";
-    formDescription.textContent = "Login to your Beeja.LK account";
+    formDescription.textContent =
+        "Login to your Beeja.LK account";
+
+    document.getElementById("forgotDescription").textContent =
+        "Enter your registered email address.";
+
+    verifiedEmail = "";
 
     showMessage("");
 
-});
+}
+
+
+// =======================================
+// SWITCH TO REGISTER
+// =======================================
+
+document.getElementById("showRegister")
+    .addEventListener("click", function(event) {
+
+        event.preventDefault();
+
+        loginForm.hidden = true;
+        forgotForm.hidden = true;
+        registerForm.hidden = false;
+
+        formTitle.textContent = "Create Account";
+        formDescription.textContent = "Join Beeja.LK today";
+
+        showMessage("");
+
+    });
+
+
+// =======================================
+// SWITCH TO LOGIN
+// =======================================
+
+document.getElementById("showLogin")
+    .addEventListener("click", function(event) {
+
+        event.preventDefault();
+
+        registerForm.hidden = true;
+        forgotForm.hidden = true;
+        loginForm.hidden = false;
+
+        formTitle.textContent = "Welcome Back!";
+        formDescription.textContent =
+            "Login to your Beeja.LK account";
+
+        showMessage("");
+
+    });
 
 
 // =======================================
 // CUSTOMER REGISTRATION
 // =======================================
 
-registerForm.addEventListener("submit", function(e) {
+registerForm.addEventListener("submit", function(event) {
 
-    e.preventDefault();
+    event.preventDefault();
 
-    const name = document.getElementById("registerName").value.trim();
+    const name = document.getElementById("registerName")
+        .value.trim();
 
-    const email = document.getElementById("registerEmail").value.trim().toLowerCase();
+    const email = document.getElementById("registerEmail")
+        .value.trim().toLowerCase();
 
-    const phone = document.getElementById("registerPhone").value.trim();
+    const phone = document.getElementById("registerPhone")
+        .value.trim();
 
-    const password = document.getElementById("registerPassword").value;
+    const password = document.getElementById("registerPassword")
+        .value;
 
     if (!name || !email || !phone || !password) {
         showMessage("Please fill all fields.");
+        return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showMessage("Please enter a valid email address.");
         return;
     }
 
@@ -145,18 +264,16 @@ registerForm.addEventListener("submit", function(e) {
         return;
     }
 
-    let users = getUsers();
+    const users = getUsers();
 
-    // CHECK EXISTING EMAIL
-
-    const existingUser = users.find(user => user.email === email);
+    const existingUser = users.find(user =>
+        user.email.toLowerCase() === email
+    );
 
     if (existingUser) {
         showMessage("This email is already registered.");
         return;
     }
-
-    // CREATE NEW USER
 
     const newUser = {
         id: Date.now(),
@@ -170,22 +287,23 @@ registerForm.addEventListener("submit", function(e) {
 
     saveUsers(users);
 
-    
-// SAVE CUSTOMER REGISTRATION TO GOOGLE SHEETS
 
-sendToGoogleSheets({
-    action: "register",
-    name: name,
-    email: email,
-    phone: phone
-});
+    // SAVE REGISTRATION TO GOOGLE SHEETS
+
+    sendToGoogleSheets({
+        action: "register",
+        name: name,
+        email: email,
+        phone: phone
+    });
 
 
-    // LOGIN AFTER REGISTRATION
+    // AUTOMATIC LOGIN AFTER REGISTRATION
 
-    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify({
-        id: newUser.id
-    }));
+    localStorage.setItem(
+        CURRENT_USER_KEY,
+        JSON.stringify({ id: newUser.id })
+    );
 
     registerForm.reset();
 
@@ -198,47 +316,43 @@ sendToGoogleSheets({
 // CUSTOMER LOGIN
 // =======================================
 
-loginForm.addEventListener("submit", function(e) {
+loginForm.addEventListener("submit", function(event) {
 
-    e.preventDefault();
+    event.preventDefault();
 
-    const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+    const email = document.getElementById("loginEmail")
+        .value.trim().toLowerCase();
 
-    const password = document.getElementById("loginPassword").value;
+    const password = document.getElementById("loginPassword")
+        .value;
 
     const users = getUsers();
 
-    // FIND USER
-
-    const user = users.find(function(item) {
-
-        return item.email === email &&
-               item.password === password;
-
-    });
+    const user = users.find(item =>
+        item.email.toLowerCase() === email &&
+        item.password === password
+    );
 
     if (!user) {
-
         showMessage("Invalid email or password.");
-
         return;
-
     }
 
-    
-// SAVE SUCCESSFUL LOGIN TO GOOGLE SHEETS
 
-sendToGoogleSheets({
-    action: "login",
-    email: user.email
-});
+    // SAVE SUCCESSFUL LOGIN TO GOOGLE SHEETS
+
+    sendToGoogleSheets({
+        action: "login",
+        email: user.email
+    });
 
 
     // SAVE LOGIN SESSION
 
-    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify({
-        id: user.id
-    }));
+    localStorage.setItem(
+        CURRENT_USER_KEY,
+        JSON.stringify({ id: user.id })
+    );
 
     loginForm.reset();
 
@@ -260,7 +374,9 @@ function showDashboard() {
         return;
     }
 
-    const user = getUsers().find(item => item.id === currentUser.id);
+    const user = getUsers().find(item =>
+        item.id === currentUser.id
+    );
 
     if (!user) {
         localStorage.removeItem(CURRENT_USER_KEY);
@@ -271,13 +387,17 @@ function showDashboard() {
     authBox.hidden = true;
     dashboard.hidden = false;
 
-    document.getElementById("customerName").textContent = user.name;
+    document.getElementById("customerName").textContent =
+        user.name;
 
-    document.getElementById("profileName").textContent = user.name;
+    document.getElementById("profileName").textContent =
+        user.name;
 
-    document.getElementById("profileEmail").textContent = user.email;
+    document.getElementById("profileEmail").textContent =
+        user.email;
 
-    document.getElementById("profilePhone").textContent = user.phone;
+    document.getElementById("profilePhone").textContent =
+        user.phone;
 
 }
 
@@ -286,199 +406,252 @@ function showDashboard() {
 // LOGOUT
 // =======================================
 
-document.getElementById("logoutBtn").addEventListener("click", function() {
+document.getElementById("logoutBtn")
+    .addEventListener("click", function() {
 
-    localStorage.removeItem(CURRENT_USER_KEY);
+        localStorage.removeItem(CURRENT_USER_KEY);
 
-    showLoginPage();
+        showLoginPage();
 
-});
-
-
-// =======================================
-// BEEJA.LK EMAIL OTP PASSWORD RESET
-// =======================================
-
-const forgotForm = document.getElementById("forgotForm");
-
-const forgotPasswordLink =
-    document.getElementById("forgotPassword");
-
-const backToLogin =
-    document.getElementById("backToLogin");
-
-let verifiedEmail = "";
+    });
 
 
 // =======================================
 // OPEN FORGOT PASSWORD
 // =======================================
 
-forgotPasswordLink.addEventListener("click", function(e) {
+document.getElementById("forgotPassword")
+    .addEventListener("click", function(event) {
 
-    e.preventDefault();
+        event.preventDefault();
 
-    loginForm.hidden = true;
-    registerForm.hidden = true;
-    forgotForm.hidden = false;
+        stopOtpResendTimer();
 
-    document.getElementById("otpEmailStep").hidden = false;
-    document.getElementById("otpVerifyStep").hidden = true;
-    document.getElementById("newPasswordStep").hidden = true;
+        loginForm.hidden = true;
+        registerForm.hidden = true;
+        forgotForm.hidden = false;
 
-    document.getElementById("forgotEmail").value = "";
-    document.getElementById("otpCode").value = "";
+        otpEmailStep.hidden = false;
+        otpVerifyStep.hidden = true;
+        newPasswordStep.hidden = true;
 
-    formTitle.textContent = "Forgot Password";
-    formDescription.textContent = "Verify your email to reset your password";
+        forgotForm.reset();
 
-    verifiedEmail = "";
+        verifiedEmail = "";
 
-    showMessage("");
+        formTitle.textContent = "Forgot Password";
+        formDescription.textContent =
+            "Verify your email to reset your password";
 
-});
+        document.getElementById("forgotDescription").textContent =
+            "Enter your registered email address.";
+
+        showMessage("");
+
+    });
 
 
+// =======================================
+// JSONP REQUEST HELPER
+// =======================================
 
-async function sendPasswordOtp() {
+function jsonpRequest(params, callbackPrefix, onResult, onError) {
 
-    const email = document
-        .getElementById("forgotEmail")
-        .value.trim()
-        .toLowerCase();
+    const callbackName =
+        callbackPrefix + "_" + Date.now() + "_" +
+        Math.floor(Math.random() * 100000);
+
+    params.set("callback", callbackName);
+
+    const script = document.createElement("script");
+
+    script.src =
+        GOOGLE_SCRIPT_URL + "?" + params.toString();
+
+    let completed = false;
+
+    const timeout = setTimeout(function() {
+
+        finish();
+
+        onError("Request timed out. Please try again.");
+
+    }, 20000);
+
+
+    function finish() {
+
+        if (completed) return;
+
+        completed = true;
+
+        clearTimeout(timeout);
+
+        delete window[callbackName];
+
+        script.remove();
+
+    }
+
+
+    window[callbackName] = function(result) {
+
+        if (completed) return;
+
+        finish();
+
+        onResult(result);
+
+    };
+
+
+    script.onerror = function() {
+
+        if (completed) return;
+
+        finish();
+
+        onError("Google Apps Script connection failed.");
+
+    };
+
+
+    document.body.appendChild(script);
+
+}
+
+
+// =======================================
+// SEND PASSWORD RESET OTP
+// =======================================
+
+function sendPasswordOtp(button = sendOtpBtn) {
+
+    const email = forgotEmail.value.trim().toLowerCase();
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
 
         showMessage("Please enter a valid email.");
 
         return;
+
     }
 
-    const button = document.getElementById("sendOtpBtn");
-
     button.disabled = true;
-    button.textContent = "Sending OTP...";
 
-    const callbackName = "beejaSendOTP_" + Date.now();
+    const originalText =
+        button.id === "resendOtpBtn"
+            ? "Resending..."
+            : "Sending OTP...";
+
+    button.textContent = originalText;
+
 
     const params = new URLSearchParams();
 
-    params.append("action", "sendOtp");
-    params.append("email", email);
-    params.append("callback", callbackName);
+    params.set("action", "sendOtp");
+    params.set("email", email);
 
-    const script = document.createElement("script");
 
-    script.src = GOOGLE_SCRIPT_URL + "?" + params.toString();
+    jsonpRequest(
+        params,
+        "beejaSendOTP",
 
-    let completed = false;
+        function(result) {
 
-    function cleanup() {
+            button.disabled = false;
 
-        delete window[callbackName];
+            button.textContent =
+                button.id === "resendOtpBtn"
+                    ? "Resend OTP"
+                    : "Send OTP";
 
-        script.remove();
 
-        button.disabled = false;
-        button.textContent = "Send OTP";
-    }
+            if (result.success) {
 
-    window[callbackName] = function(result) {
+                otpEmailStep.hidden = true;
+                otpVerifyStep.hidden = false;
+                newPasswordStep.hidden = true;
 
-        completed = true;
+                document.getElementById("forgotDescription")
+                    .textContent =
+                    "Enter the OTP sent to your email address.";
 
-        cleanup();
+                showMessage(
+                    "OTP sent successfully! Check your inbox.",
+                    "#278b45"
+                );
 
-        if (result.success) {
+                otpCode.value = "";
 
-            document.getElementById("otpEmailStep").hidden = true;
+                startOtpResendTimer();
 
-            document.getElementById("otpVerifyStep").hidden = false;
+            } else {
 
-            document.getElementById("forgotDescription").textContent =
-                "Enter the OTP sent to your email.";
+                showMessage(
+                    result.message || "Unable to send OTP."
+                );
 
-            showMessage(
-                "OTP sent successfully! Check your inbox.",
-                "#278b45"
-            );
+            }
 
-            startOtpResendTimer();
+        },
 
-        } else {
+        function(errorMessage) {
 
-            showMessage(result.message || "Unable to send OTP.");
+            button.disabled = false;
 
-        }
-    };
+            button.textContent =
+                button.id === "resendOtpBtn"
+                    ? "Resend OTP"
+                    : "Send OTP";
 
-    script.onerror = function() {
-
-        if (completed) return;
-
-        cleanup();
-
-        showMessage("Google Apps Script connection failed.");
-
-    };
-
-    document.body.appendChild(script);
-
-    // Prevent endless waiting
-
-    setTimeout(function() {
-
-        if (!completed) {
-
-            cleanup();
-
-            showMessage("Request timed out. Please try again.");
+            showMessage(errorMessage);
 
         }
-
-    }, 20000);
+    );
 
 }
 
 
-
-// =======================================
 // SEND OTP BUTTON
+
+sendOtpBtn.addEventListener("click", function() {
+
+    sendPasswordOtp(sendOtpBtn);
+
+});
+
+
 // =======================================
-
-document.getElementById("sendOtpBtn")
-    .addEventListener("click", sendPasswordOtp);
-
-
-// =======================================
-// RESEND OTP TIMER
+// OTP RESEND TIMER
 // =======================================
 
 function startOtpResendTimer() {
 
-    const button = document.getElementById("resendOtpBtn");
-
-    button.disabled = true;
+    stopOtpResendTimer();
 
     let seconds = 60;
 
-    button.textContent = "Resend OTP (" + seconds + "s)";
+    resendOtpBtn.disabled = true;
 
-    const timer = setInterval(function() {
+    resendOtpBtn.textContent =
+        "Resend OTP (" + seconds + "s)";
+
+
+    resendTimer = setInterval(function() {
 
         seconds--;
 
-        button.textContent = "Resend OTP (" + seconds + "s)";
-
         if (seconds <= 0) {
 
-            clearInterval(timer);
+            stopOtpResendTimer();
 
-            button.disabled = false;
-
-            button.textContent = "Resend OTP";
+            return;
 
         }
+
+        resendOtpBtn.textContent =
+            "Resend OTP (" + seconds + "s)";
 
     }, 1000);
 
@@ -489,88 +662,64 @@ function startOtpResendTimer() {
 // RESEND OTP
 // =======================================
 
-document.getElementById("resendOtpBtn")
-    .addEventListener("click", function() {
+resendOtpBtn.addEventListener("click", function() {
 
-        sendPasswordOtp(
-            document.getElementById("resendOtpBtn")
-        );
+    if (resendOtpBtn.disabled) return;
 
-    });
+    sendPasswordOtp(resendOtpBtn);
+
+});
+
 
 // =======================================
 // VERIFY OTP
 // =======================================
 
-document.getElementById("verifyOtpBtn")
-    .addEventListener("click", function() {
+verifyOtpBtn.addEventListener("click", function() {
 
-        const email = document
-            .getElementById("forgotEmail")
-            .value.trim()
-            .toLowerCase();
+    const email = forgotEmail.value.trim().toLowerCase();
+    const otp = otpCode.value.trim();
 
-        const otp = document
-            .getElementById("otpCode")
-            .value.trim();
+    if (!/^[0-9]{6}$/.test(otp)) {
 
-        if (!/^[0-9]{6}$/.test(otp)) {
-            showMessage("Enter a valid 6-digit OTP.");
-            return;
-        }
+        showMessage("Enter a valid 6-digit OTP.");
 
-        const button = document.getElementById("verifyOtpBtn");
+        return;
 
-        button.disabled = true;
-        button.textContent = "Verifying...";
+    }
 
-        const callbackName = "beejaVerify_" + Date.now();
+    verifyOtpBtn.disabled = true;
+    verifyOtpBtn.textContent = "Verifying...";
 
-        const params = new URLSearchParams();
 
-        params.append("action", "verifyOtp");
-        params.append("email", email);
-        params.append("otp", otp);
-        params.append("callback", callbackName);
+    const params = new URLSearchParams();
 
-        const script = document.createElement("script");
+    params.set("action", "verifyOtp");
+    params.set("email", email);
+    params.set("otp", otp);
 
-        script.src = GOOGLE_SCRIPT_URL + "?" + params.toString();
 
-        let completed = false;
+    jsonpRequest(
+        params,
+        "beejaVerifyOTP",
 
-        const timeout = setTimeout(function() {
-            finish();
-            showMessage("Request timed out. Please try again.");
-        }, 20000);
+        function(result) {
 
-        function finish() {
-            if (completed) return;
+            verifyOtpBtn.disabled = false;
+            verifyOtpBtn.textContent = "Verify OTP";
 
-            completed = true;
-            clearTimeout(timeout);
-
-            delete window[callbackName];
-            script.remove();
-
-            button.disabled = false;
-            button.textContent = "Verify OTP";
-        }
-
-        window[callbackName] = function(result) {
-
-            if (completed) return;
-
-            finish();
 
             if (result.success) {
 
                 verifiedEmail = email;
 
-                document.getElementById("otpVerifyStep").hidden = true;
-                document.getElementById("newPasswordStep").hidden = false;
+                stopOtpResendTimer();
 
-                document.getElementById("forgotDescription").textContent =
+                otpVerifyStep.hidden = true;
+                newPasswordStep.hidden = false;
+
+                document.getElementById("forgotDescription")
+                    .textContent =
                     "OTP verified. Create your new password.";
 
                 showMessage(
@@ -579,206 +728,225 @@ document.getElementById("verifyOtpBtn")
                 );
 
             } else {
-                showMessage(result.message || "Invalid or expired OTP.");
+
+                showMessage(
+                    result.message || "Invalid or expired OTP."
+                );
+
             }
-        };
 
-        script.onerror = function() {
+        },
 
-            if (completed) return;
+        function(errorMessage) {
 
-            finish();
+            verifyOtpBtn.disabled = false;
+            verifyOtpBtn.textContent = "Verify OTP";
 
-            showMessage(
-                "OTP verification failed. Please try again."
-            );
-        };
+            showMessage(errorMessage);
 
-        document.body.appendChild(script);
+        }
+    );
 
-    });
+});
+
 
 // =======================================
 // SAVE NEW PASSWORD
 // =======================================
 
-document.getElementById("saveNewPasswordBtn")
-    .addEventListener("click", function() {
+saveNewPasswordBtn.addEventListener("click", function() {
 
-        const newPassword =
-            document.getElementById("newPassword").value;
+    const newPassword =
+        document.getElementById("newPassword").value;
 
-        const confirmPassword =
-            document.getElementById("confirmPassword").value;
+    const confirmPassword =
+        document.getElementById("confirmPassword").value;
 
-        if (!verifiedEmail) {
 
-            showMessage("Please verify your email first.");
+    if (!verifiedEmail) {
 
-            return;
+        showMessage("Please verify your email first.");
 
-        }
+        return;
 
-        if (newPassword.length < 8) {
+    }
 
-            showMessage("Password must contain at least 8 characters.");
+    if (newPassword.length < 8) {
 
-            return;
-
-        }
-
-        if (newPassword !== confirmPassword) {
-
-            showMessage("Passwords do not match.");
-
-            return;
-
-        }
-
-        // Find account in this browser
-
-        let users = getUsers();
-
-        const user = users.find(item =>
-            item.email === verifiedEmail
+        showMessage(
+            "Password must contain at least 8 characters."
         );
 
-        if (!user) {
+        return;
 
-            showMessage(
-                "This demo account is not available in this browser."
-            );
+    }
 
-            return;
+    if (newPassword !== confirmPassword) {
 
-        }
+        showMessage("Passwords do not match.");
 
-        // Update demo password
+        return;
 
-        user.password = newPassword;
+    }
 
-        saveUsers(users);
 
-        // Log out old session
+    // FIND ACCOUNT IN THIS BROWSER
 
-        localStorage.removeItem(CURRENT_USER_KEY);
+    const users = getUsers();
 
-        // Clear form
+    const user = users.find(item =>
+        item.email.toLowerCase() === verifiedEmail
+    );
 
-        document.getElementById("newPassword").value = "";
 
-        document.getElementById("confirmPassword").value = "";
+    if (!user) {
 
-        verifiedEmail = "";
+        showMessage(
+            "This account is not available in this browser."
+        );
 
-        showLoginPage();
+        return;
 
-        alert("Password changed successfully! Please login.");
+    }
 
-    });
+
+    // UPDATE LOCAL PASSWORD
+
+    user.password = newPassword;
+
+    saveUsers(users);
+
+
+    // LOG OUT CURRENT SESSION
+
+    localStorage.removeItem(CURRENT_USER_KEY);
+
+
+    // RESET PASSWORD FORM
+
+    document.getElementById("newPassword").value = "";
+    document.getElementById("confirmPassword").value = "";
+
+    verifiedEmail = "";
+
+    showLoginPage();
+
+    showMessage(
+        "Password changed successfully. Please login.",
+        "#278b45"
+    );
+
+});
 
 
 // =======================================
 // BACK TO LOGIN
 // =======================================
 
-backToLogin.addEventListener("click", function(e) {
+document.getElementById("backToLogin")
+    .addEventListener("click", function(event) {
 
-    e.preventDefault();
+        event.preventDefault();
 
-    verifiedEmail = "";
+        verifiedEmail = "";
 
-    showLoginPage();
+        showLoginPage();
 
-});
-
-
-// =======================================
-// SHOW LOGIN PAGE
-// =======================================
-
-function showLoginPage() {
-
-    dashboard.hidden = true;
-    authBox.hidden = false;
-
-    registerForm.hidden = true;
-    loginForm.hidden = false;
-    forgotForm.hidden = true;
-
-    loginForm.reset();
-
-    formTitle.textContent = "Welcome Back!";
-    formDescription.textContent = "Login to your Beeja.LK account";
-
-    showMessage("");
-
-}
+    });
 
 
 // =======================================
 // EDIT PROFILE
 // =======================================
 
-document.getElementById("editProfileBtn").addEventListener("click", function() {
+document.getElementById("editProfileBtn")
+    .addEventListener("click", function() {
 
-    const currentUser = getCurrentUser();
+        const currentUser = getCurrentUser();
 
-    const user = getUsers().find(item => item.id === currentUser.id);
+        if (!currentUser) return;
 
-    if (!user) return;
+        const user = getUsers().find(item =>
+            item.id === currentUser.id
+        );
 
-    document.getElementById("editName").value = user.name;
+        if (!user) return;
 
-    document.getElementById("editPhone").value = user.phone;
+        document.getElementById("editName").value =
+            user.name;
 
-    document.getElementById("editProfile").hidden = false;
+        document.getElementById("editPhone").value =
+            user.phone;
 
-    document.getElementById("editProfile").scrollIntoView({
-        behavior: "smooth"
+        document.getElementById("editProfile").hidden = false;
+
+        document.getElementById("editProfile")
+            .scrollIntoView({
+                behavior: "smooth"
+            });
+
     });
 
-});
 
-
+// =======================================
 // SAVE PROFILE CHANGES
+// =======================================
 
-document.getElementById("editForm").addEventListener("submit", function(e) {
+document.getElementById("editForm")
+    .addEventListener("submit", function(event) {
 
-    e.preventDefault();
+        event.preventDefault();
 
-    const currentUser = getCurrentUser();
+        const currentUser = getCurrentUser();
 
-    if (!currentUser) return;
+        if (!currentUser) return;
 
-    let users = getUsers();
+        const users = getUsers();
 
-    const user = users.find(item => item.id === currentUser.id);
+        const user = users.find(item =>
+            item.id === currentUser.id
+        );
 
-    if (!user) return;
+        if (!user) return;
 
-    user.name = document.getElementById("editName").value.trim();
+        const name =
+            document.getElementById("editName").value.trim();
 
-    user.phone = document.getElementById("editPhone").value.trim();
+        const phone =
+            document.getElementById("editPhone").value.trim();
 
-    saveUsers(users);
+        if (!name || !phone) {
 
-    document.getElementById("editProfile").hidden = true;
+            alert("Please fill all fields.");
 
-    showDashboard();
+            return;
 
-    alert("Profile updated successfully!");
+        }
 
-});
+        user.name = name;
+        user.phone = phone;
+
+        saveUsers(users);
+
+        document.getElementById("editProfile").hidden = true;
+
+        showDashboard();
+
+        alert("Profile updated successfully!");
+
+    });
 
 
+// =======================================
 // CANCEL EDIT
+// =======================================
 
-document.getElementById("cancelEdit").addEventListener("click", function() {
+document.getElementById("cancelEdit")
+    .addEventListener("click", function() {
 
-    document.getElementById("editProfile").hidden = true;
+        document.getElementById("editProfile").hidden = true;
 
-});
+    });
 
 
 // =======================================
