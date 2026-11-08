@@ -1,0 +1,264 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Account | Beeja.LK</title>
+
+    <link rel="stylesheet" href="account.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;500;600;700;800;900&display=swap"
+          rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="account-header">
+
+        <a href="index.html" class="logo">
+            <img src="images/logo.png" alt="Beeja Logo">
+        </a>
+
+        <a href="index.html" class="back-home">
+            ← Back to Home
+        </a>
+
+    </header>
+
+
+    <!-- ACCOUNT SECTION -->
+    <main class="account-container">
+
+        <!-- LOGIN / REGISTER -->
+        <section class="auth-box" id="authBox">
+
+            <div class="auth-heading">
+                <h1 id="formTitle">Welcome Back!</h1>
+                <p id="formDescription">
+                    Login to your Beeja.LK account
+                </p>
+            </div>
+
+
+            <!-- LOGIN FORM -->
+            <form id="loginForm">
+
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email"
+                           id="loginEmail"
+                           placeholder="Enter your email"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password"
+                           id="loginPassword"
+                           placeholder="Enter your password"
+                           required>
+                </div>
+
+                <button type="submit" class="auth-button">
+                    Login
+                </button>
+
+                <p class="switch-text">
+                    Don't have an account?
+                    <a href="#" id="showRegister">Create Account</a>
+                </p>
+
+            </form>
+
+
+            <!-- REGISTER FORM -->
+            <form id="registerForm" hidden>
+
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text"
+                           id="registerName"
+                           placeholder="Enter your full name"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email"
+                           id="registerEmail"
+                           placeholder="Enter your email"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel"
+                           id="registerPhone"
+                           placeholder="Enter your phone number"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password"
+                           id="registerPassword"
+                           placeholder="Create a password"
+                           minlength="8"
+                           required>
+                </div>
+
+                <button type="submit" class="auth-button">
+                    Create Account
+                </button>
+
+                <p class="switch-text">
+                    Already have an account?
+                    <a href="#" id="showLogin">Login</a>
+                </p>
+
+            </form>
+
+            <p id="authMessage" class="message" role="alert"></p>
+
+        </section>
+
+
+        <!-- CUSTOMER DASHBOARD -->
+        <section class="dashboard" id="dashboard" hidden>
+
+            <div class="dashboard-heading">
+                <div>
+                    <span class="welcome-label">MY ACCOUNT</span>
+                    <h1>Welcome, <span id="customerName"></span>!</h1>
+                    <p>Manage your Beeja.LK account.</p>
+                </div>
+
+                <button id="logoutBtn" class="logout-button">
+                    Logout
+                </button>
+            </div>
+
+
+            <div class="dashboard-grid">
+
+                <!-- PROFILE -->
+                <div class="dashboard-card">
+
+                    <div class="card-icon">👤</div>
+
+                    <h3>Personal Information</h3>
+
+                    <div class="profile-details">
+
+                        <p>
+                            <strong>Name:</strong>
+                            <span id="profileName"></span>
+                        </p>
+
+                        <p>
+                            <strong>Email:</strong>
+                            <span id="profileEmail"></span>
+                        </p>
+
+                        <p>
+                            <strong>Phone:</strong>
+                            <span id="profilePhone"></span>
+                        </p>
+
+                    </div>
+
+                    <button id="editProfileBtn" class="secondary-button">
+                        Edit Profile
+                    </button>
+
+                </div>
+
+
+                <!-- SHOPPING -->
+                <div class="dashboard-card">
+
+                    <div class="card-icon">🛒</div>
+
+                    <h3>Shopping Cart</h3>
+
+                    <p>
+                        View your selected products and continue shopping.
+                    </p>
+
+                    <a href="cart.html" class="secondary-button">
+                        View Cart
+                    </a>
+
+                </div>
+
+
+                <!-- SHOPPING -->
+                <div class="dashboard-card">
+
+                    <div class="card-icon">🛍️</div>
+
+                    <h3>Continue Shopping</h3>
+
+                    <p>
+                        Explore fresh groceries and everyday essentials.
+                    </p>
+
+                    <a href="index.html#products" class="secondary-button">
+                        Shop Now
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- EDIT PROFILE -->
+            <div class="edit-profile" id="editProfile" hidden>
+
+                <h2>Edit Personal Information</h2>
+
+                <form id="editForm">
+
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="editName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="editPhone" required>
+                    </div>
+
+                    <button type="submit" class="auth-button">
+                        Save Changes
+                    </button>
+
+                    <button type="button"
+                            id="cancelEdit"
+                            class="cancel-button">
+                        Cancel
+                    </button>
+
+                </form>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2026 Beeja.LK. All Rights Reserved.</p>
+    </footer>
+
+
+    <script src="account.js"></script>
+
+</body>
+</html>
