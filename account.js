@@ -296,6 +296,86 @@ document.getElementById("logoutBtn").addEventListener("click", function() {
 
 
 // =======================================
+// FORGOT PASSWORD
+// DEMO ONLY - NOT SECURE FOR LIVE USE
+// =======================================
+
+const forgotForm = document.getElementById("forgotForm");
+
+const forgotPasswordLink =
+    document.getElementById("forgotPassword");
+
+const backToLogin =
+    document.getElementById("backToLogin");
+
+
+// OPEN FORGOT PASSWORD FORM
+
+forgotPasswordLink.addEventListener("click", function(e) {
+
+    e.preventDefault();
+
+    loginForm.hidden = true;
+    registerForm.hidden = true;
+    forgotForm.hidden = false;
+
+    formTitle.textContent = "Forgot Password";
+    formDescription.textContent = "Reset your account password";
+
+    showMessage("");
+
+});
+
+
+// BACK TO LOGIN
+
+backToLogin.addEventListener("click", function(e) {
+
+    e.preventDefault();
+
+    forgotForm.hidden = true;
+    loginForm.hidden = false;
+
+    formTitle.textContent = "Welcome Back!";
+    formDescription.textContent =
+        "Login to your Beeja.LK account";
+
+    showMessage("");
+
+});
+
+
+// RESET PASSWORD
+
+forgotForm.addEventListener("submit", function(e) {
+
+    e.preventDefault();
+
+    const email = document
+        .getElementById("forgotEmail")
+        .value.trim()
+        .toLowerCase();
+
+    const users = getUsers();
+
+    const user = users.find(item => item.email === email);
+
+    if (!user) {
+
+        showMessage("Unable to find this account.");
+
+        return;
+
+    }
+
+    showMessage(
+        "Please use the secure password reset service.",
+        "#278b45"
+    );
+
+});
+
+// =======================================
 // SHOW LOGIN PAGE
 // =======================================
 
