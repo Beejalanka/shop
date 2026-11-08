@@ -3,6 +3,40 @@
 // BEEJA.LK ACCOUNT SYSTEM
 // =======================================
 
+
+
+// =======================================
+// GOOGLE SHEETS CONNECTION
+// =======================================
+
+const GOOGLE_SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbz6qf-zbJnKgY6Xk7QlRsIlR8a8CO5LDAq1ix5Gw9D7I7yZWkZlH03-0XUYyvqOuS22/exec";
+
+
+// SEND DATA TO GOOGLE SHEETS
+
+function sendToGoogleSheets(data) {
+
+    const formData = new URLSearchParams();
+
+    Object.entries(data).forEach(([key, value]) => {
+        formData.append(key, value);
+    });
+
+    fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        body: formData
+    })
+    .catch(error => {
+        console.error("Google Sheets error:", error);
+    });
+
+}
+
+
+
+
 // Demo front-end account storage
 const USERS_KEY = "beejaUsers";
 const CURRENT_USER_KEY = "beejaCurrentUser";
@@ -136,6 +170,17 @@ registerForm.addEventListener("submit", function(e) {
 
     saveUsers(users);
 
+    
+// SAVE CUSTOMER REGISTRATION TO GOOGLE SHEETS
+
+sendToGoogleSheets({
+    action: "register",
+    name: name,
+    email: email,
+    phone: phone
+});
+
+
     // LOGIN AFTER REGISTRATION
 
     localStorage.setItem(CURRENT_USER_KEY, JSON.stringify({
@@ -179,6 +224,15 @@ loginForm.addEventListener("submit", function(e) {
         return;
 
     }
+
+    
+// SAVE SUCCESSFUL LOGIN TO GOOGLE SHEETS
+
+sendToGoogleSheets({
+    action: "login",
+    email: user.email
+});
+
 
     // SAVE LOGIN SESSION
 
