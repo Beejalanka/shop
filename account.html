@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,6 +11,12 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;500;600;700;800;900&display=swap"
           rel="stylesheet">
+
+    <style>
+        [hidden] {
+            display: none !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -30,14 +35,15 @@
     </header>
 
 
-    <!-- ACCOUNT SECTION -->
+    <!-- MAIN ACCOUNT SECTION -->
     <main class="account-container">
 
-        <!-- LOGIN / REGISTER -->
+        <!-- LOGIN / REGISTER AREA -->
         <section class="auth-box" id="authBox">
 
             <div class="auth-heading">
                 <h1 id="formTitle">Welcome Back!</h1>
+
                 <p id="formDescription">
                     Login to your Beeja.LK account
                 </p>
@@ -48,27 +54,37 @@
             <form id="loginForm">
 
                 <div class="form-group">
-                    <label>Email Address</label>
-                    <input type="email"
-                           id="loginEmail"
-                           placeholder="Enter your email"
-                           required>
+                    <label for="loginEmail">Email Address</label>
+
+                    <input
+                        type="email"
+                        id="loginEmail"
+                        name="email"
+                        placeholder="Enter your email"
+                        autocomplete="email"
+                        required
+                    >
                 </div>
 
                 <div class="form-group">
-                    <label>Password</label>
-                    <input type="password"
-                           id="loginPassword"
-                           placeholder="Enter your password"
-                           required>
+                    <label for="loginPassword">Password</label>
+
+                    <input
+                        type="password"
+                        id="loginPassword"
+                        name="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
                 </div>
-                
+
                 <div class="forgot-password">
                     <a href="#" id="forgotPassword">
                         Forgot Password?
                     </a>
                 </div>
-                
+
                 <button type="submit" class="auth-button">
                     Login
                 </button>
@@ -80,142 +96,61 @@
 
             </form>
 
-         
-<!-- FORGOT PASSWORD FORM -->
-
-<form id="forgotForm" hidden>
-
-    <h2>Reset Your Password</h2>
-
-    <p id="forgotDescription">
-        Enter your registered email address.
-    </p>
-
-    <!-- STEP 1: EMAIL -->
-
-    <div id="otpEmailStep">
-
-        <div class="form-group">
-            <label>Email Address</label>
-
-            <input type="email"
-                   id="forgotEmail"
-                   placeholder="Enter registered email"
-                   required>
-        </div>
-
-        <button type="button"
-                id="sendOtpBtn"
-                class="auth-button">
-            Send OTP
-        </button>
-
-    </div>
-
-
-    <!-- STEP 2: OTP -->
-
-    <div id="otpVerifyStep" hidden>
-
-        <div class="form-group">
-            <label>Enter 6-Digit OTP</label>
-
-            <input type="text"
-                   id="otpCode"
-                   placeholder="Enter OTP"
-                   inputmode="numeric"
-                   maxlength="6"
-                   pattern="[0-9]{6}">
-        </div>
-
-        <button type="button"
-                id="verifyOtpBtn"
-                class="auth-button">
-            Verify OTP
-        </button>
-
-        <button type="button"
-                id="resendOtpBtn"
-                class="cancel-button">
-            Resend OTP
-        </button>
-
-    </div>
-
-
-    <!-- STEP 3: NEW PASSWORD -->
-
-    <div id="newPasswordStep" hidden>
-
-        <div class="form-group">
-            <label>New Password</label>
-
-            <input type="password"
-                   id="newPassword"
-                   minlength="8"
-                   placeholder="Enter new password">
-        </div>
-
-        <div class="form-group">
-            <label>Confirm Password</label>
-
-            <input type="password"
-                   id="confirmPassword"
-                   minlength="8"
-                   placeholder="Confirm new password">
-        </div>
-
-        <button type="button"
-                id="saveNewPasswordBtn"
-                class="auth-button">
-            Save New Password
-        </button>
-
-    </div>
-
-
-    <p class="switch-text">
-        Remember your password?
-        <a href="#" id="backToLogin">Login</a>
-    </p>
-
-</form>
-
 
             <!-- REGISTER FORM -->
             <form id="registerForm" hidden>
 
                 <div class="form-group">
-                    <label>Full Name</label>
-                    <input type="text"
-                           id="registerName"
-                           placeholder="Enter your full name"
-                           required>
+                    <label for="registerName">Full Name</label>
+
+                    <input
+                        type="text"
+                        id="registerName"
+                        name="name"
+                        placeholder="Enter your full name"
+                        autocomplete="name"
+                        required
+                    >
                 </div>
 
                 <div class="form-group">
-                    <label>Email Address</label>
-                    <input type="email"
-                           id="registerEmail"
-                           placeholder="Enter your email"
-                           required>
+                    <label for="registerEmail">Email Address</label>
+
+                    <input
+                        type="email"
+                        id="registerEmail"
+                        name="email"
+                        placeholder="Enter your email"
+                        autocomplete="email"
+                        required
+                    >
                 </div>
 
                 <div class="form-group">
-                    <label>Phone Number</label>
-                    <input type="tel"
-                           id="registerPhone"
-                           placeholder="Enter your phone number"
-                           required>
+                    <label for="registerPhone">Phone Number</label>
+
+                    <input
+                        type="tel"
+                        id="registerPhone"
+                        name="phone"
+                        placeholder="Enter your phone number"
+                        autocomplete="tel"
+                        required
+                    >
                 </div>
 
                 <div class="form-group">
-                    <label>Password</label>
-                    <input type="password"
-                           id="registerPassword"
-                           placeholder="Create a password"
-                           minlength="8"
-                           required>
+                    <label for="registerPassword">Password</label>
+
+                    <input
+                        type="password"
+                        id="registerPassword"
+                        name="password"
+                        placeholder="Create a password"
+                        minlength="8"
+                        autocomplete="new-password"
+                        required
+                    >
                 </div>
 
                 <button type="submit" class="auth-button">
@@ -229,7 +164,136 @@
 
             </form>
 
-            <p id="authMessage" class="message" role="alert"></p>
+
+            <!-- FORGOT PASSWORD FORM -->
+            <form id="forgotForm" hidden>
+
+                <h2>Reset Your Password</h2>
+
+                <p id="forgotDescription">
+                    Enter your registered email address.
+                </p>
+
+
+                <!-- STEP 1: EMAIL -->
+                <div id="otpEmailStep">
+
+                    <div class="form-group">
+                        <label for="forgotEmail">Email Address</label>
+
+                        <input
+                            type="email"
+                            id="forgotEmail"
+                            name="forgotEmail"
+                            placeholder="Enter registered email"
+                            autocomplete="email"
+                        >
+                    </div>
+
+                    <button
+                        type="button"
+                        id="sendOtpBtn"
+                        class="auth-button"
+                    >
+                        Send OTP
+                    </button>
+
+                </div>
+
+
+                <!-- STEP 2: OTP -->
+                <div id="otpVerifyStep" hidden>
+
+                    <div class="form-group">
+                        <label for="otpCode">Enter 6-Digit OTP</label>
+
+                        <input
+                            type="text"
+                            id="otpCode"
+                            name="otp"
+                            placeholder="Enter OTP"
+                            inputmode="numeric"
+                            maxlength="6"
+                            pattern="[0-9]{6}"
+                            autocomplete="one-time-code"
+                        >
+                    </div>
+
+                    <button
+                        type="button"
+                        id="verifyOtpBtn"
+                        class="auth-button"
+                    >
+                        Verify OTP
+                    </button>
+
+                    <button
+                        type="button"
+                        id="resendOtpBtn"
+                        class="cancel-button"
+                        disabled
+                    >
+                        Resend OTP
+                    </button>
+
+                </div>
+
+
+                <!-- STEP 3: NEW PASSWORD -->
+                <div id="newPasswordStep" hidden>
+
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+
+                        <input
+                            type="password"
+                            id="newPassword"
+                            name="newPassword"
+                            minlength="8"
+                            placeholder="Enter new password"
+                            autocomplete="new-password"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            name="confirmPassword"
+                            minlength="8"
+                            placeholder="Confirm new password"
+                            autocomplete="new-password"
+                        >
+                    </div>
+
+                    <button
+                        type="button"
+                        id="saveNewPasswordBtn"
+                        class="auth-button"
+                    >
+                        Save New Password
+                    </button>
+
+                </div>
+
+
+                <p class="switch-text">
+                    Remember your password?
+                    <a href="#" id="backToLogin">Login</a>
+                </p>
+
+            </form>
+
+
+            <!-- MESSAGE -->
+            <p
+                id="authMessage"
+                class="message"
+                role="alert"
+                aria-live="polite"
+            ></p>
 
         </section>
 
@@ -238,21 +302,32 @@
         <section class="dashboard" id="dashboard" hidden>
 
             <div class="dashboard-heading">
+
                 <div>
                     <span class="welcome-label">MY ACCOUNT</span>
-                    <h1>Welcome, <span id="customerName"></span>!</h1>
+
+                    <h1>
+                        Welcome,
+                        <span id="customerName"></span>!
+                    </h1>
+
                     <p>Manage your Beeja.LK account.</p>
                 </div>
 
-                <button id="logoutBtn" class="logout-button">
+                <button
+                    type="button"
+                    id="logoutBtn"
+                    class="logout-button"
+                >
                     Logout
                 </button>
+
             </div>
 
 
             <div class="dashboard-grid">
 
-                <!-- PROFILE -->
+                <!-- PERSONAL INFORMATION -->
                 <div class="dashboard-card">
 
                     <div class="card-icon">👤</div>
@@ -278,14 +353,18 @@
 
                     </div>
 
-                    <button id="editProfileBtn" class="secondary-button">
+                    <button
+                        type="button"
+                        id="editProfileBtn"
+                        class="secondary-button"
+                    >
                         Edit Profile
                     </button>
 
                 </div>
 
 
-                <!-- SHOPPING -->
+                <!-- SHOPPING CART -->
                 <div class="dashboard-card">
 
                     <div class="card-icon">🛒</div>
@@ -303,7 +382,7 @@
                 </div>
 
 
-                <!-- SHOPPING -->
+                <!-- CONTINUE SHOPPING -->
                 <div class="dashboard-card">
 
                     <div class="card-icon">🛍️</div>
@@ -331,22 +410,34 @@
                 <form id="editForm">
 
                     <div class="form-group">
-                        <label>Full Name</label>
-                        <input type="text" id="editName" required>
+                        <label for="editName">Full Name</label>
+
+                        <input
+                            type="text"
+                            id="editName"
+                            required
+                        >
                     </div>
 
                     <div class="form-group">
-                        <label>Phone Number</label>
-                        <input type="tel" id="editPhone" required>
+                        <label for="editPhone">Phone Number</label>
+
+                        <input
+                            type="tel"
+                            id="editPhone"
+                            required
+                        >
                     </div>
 
                     <button type="submit" class="auth-button">
                         Save Changes
                     </button>
 
-                    <button type="button"
-                            id="cancelEdit"
-                            class="cancel-button">
+                    <button
+                        type="button"
+                        id="cancelEdit"
+                        class="cancel-button"
+                    >
                         Cancel
                     </button>
 
@@ -365,6 +456,7 @@
     </footer>
 
 
+    <!-- ACCOUNT JAVASCRIPT -->
     <script src="account.js"></script>
 
 </body>
