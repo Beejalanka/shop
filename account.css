@@ -91,9 +91,7 @@ body {
     font-weight: 900;
 }
 
-#resendOtpBtn {
-    margin-top: 12px;
-}
+
 
 #forgotForm [hidden] {
     display: none !important;
