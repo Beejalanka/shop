@@ -296,8 +296,7 @@ document.getElementById("logoutBtn").addEventListener("click", function() {
 
 
 // =======================================
-// FORGOT PASSWORD
-// DEMO ONLY - NOT SECURE FOR LIVE USE
+// BEEJA.LK EMAIL OTP PASSWORD RESET
 // =======================================
 
 const forgotForm = document.getElementById("forgotForm");
@@ -308,8 +307,12 @@ const forgotPasswordLink =
 const backToLogin =
     document.getElementById("backToLogin");
 
+let verifiedEmail = "";
 
-// OPEN FORGOT PASSWORD FORM
+
+// =======================================
+// OPEN FORGOT PASSWORD
+// =======================================
 
 forgotPasswordLink.addEventListener("click", function(e) {
 
@@ -319,61 +322,349 @@ forgotPasswordLink.addEventListener("click", function(e) {
     registerForm.hidden = true;
     forgotForm.hidden = false;
 
+    document.getElementById("otpEmailStep").hidden = false;
+    document.getElementById("otpVerifyStep").hidden = true;
+    document.getElementById("newPasswordStep").hidden = true;
+
+    document.getElementById("forgotEmail").value = "";
+    document.getElementById("otpCode").value = "";
+
     formTitle.textContent = "Forgot Password";
-    formDescription.textContent = "Reset your account password";
+    formDescription.textContent = "Verify your email to reset your password";
+
+    verifiedEmail = "";
 
     showMessage("");
 
 });
 
 
-// BACK TO LOGIN
+// =======================================
+// SEND OTP
+// =======================================
 
-backToLogin.addEventListener("click", function(e) {
-
-    e.preventDefault();
-
-    forgotForm.hidden = true;
-    loginForm.hidden = false;
-
-    formTitle.textContent = "Welcome Back!";
-    formDescription.textContent =
-        "Login to your Beeja.LK account";
-
-    showMessage("");
-
-});
-
-
-// RESET PASSWORD
-
-forgotForm.addEventListener("submit", function(e) {
-
-    e.preventDefault();
+async function sendPasswordOtp() {
 
     const email = document
         .getElementById("forgotEmail")
         .value.trim()
         .toLowerCase();
 
-    const users = getUsers();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
 
-    const user = users.find(item => item.email === email);
-
-    if (!user) {
-
-        showMessage("Unable to find this account.");
+        showMessage("Please enter a valid email address.");
 
         return;
 
     }
 
-    showMessage(
-        "Please use the secure password reset service.",
-        "#278b45"
-    );
+    const button = document.getElementById("sendOtpBtn");
+
+    button.disabled = true;
+    button.textContent = "Sending OTP...";
+
+    try {
+
+        const formData = new URLSearchParams();
+
+        formData.append("action", "sendOtp");
+        formData.append("email", email);
+
+        await fetch(GOOGLE_SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors",
+            body: formData
+        });
+
+        // no-cors cannot read the Apps Script response.
+        // Show a generic message to avoid revealing account existence.
+
+        document.getElementById("otpEmailStep").hidden = true;
+
+        document.getElementById("otpVerifyStep").hidden = false;
+
+        document.getElementById("forgotDescription").textContent =
+            "If this email is registered, an OTP will arrive shortly.";
+
+        showMessage(
+            "Check your email for the 6-digit OTP.",
+            "#278b45"
+        );
+
+        startOtpResendTimer();
+
+    } catch (error) {
+
+        console.error(error);
+
+        showMessage("Unable to send OTP. Please try again.");
+
+        button.disabled = false;
+        button.textContent = "Send OTP";
+
+    }
+
+}
+
+
+// =======================================
+// SEND OTP BUTTON
+// =======================================
+
+document.getElementById("sendOtpBtn")
+    .addEventListener("click", sendPasswordOtp);
+
+
+// =======================================
+// RESEND OTP TIMER
+// =======================================
+
+function startOtpResendTimer() {
+
+    const button = document.getElementById("resendOtpBtn");
+
+    button.disabled = true;
+
+    let seconds = 60;
+
+    button.textContent = "Resend OTP (" + seconds + "s)";
+
+    const timer = setInterval(function() {
+
+        seconds--;
+
+        button.textContent = "Resend OTP (" + seconds + "s)";
+
+        if (seconds <= 0) {
+
+            clearInterval(timer);
+
+            button.disabled = false;
+
+            button.textContent = "Resend OTP";
+
+        }
+
+    }, 1000);
+
+}
+
+
+// =======================================
+// RESEND OTP
+// =======================================
+
+document.getElementById("resendOtpBtn")
+    .addEventListener("click", function() {
+
+        document.getElementById("otpVerifyStep").hidden = true;
+
+        document.getElementById("otpEmailStep").hidden = false;
+
+        showMessage("");
+
+        sendPasswordOtp();
+
+    });
+
+
+// =======================================
+// VERIFY OTP USING GOOGLE APPS SCRIPT
+// =======================================
+
+document.getElementById("verifyOtpBtn")
+    .addEventListener("click", function() {
+
+        const email = document
+            .getElementById("forgotEmail")
+            .value.trim()
+            .toLowerCase();
+
+        const otp = document
+            .getElementById("otpCode")
+            .value.trim();
+
+        if (!/^[0-9]{6}$/.test(otp)) {
+
+            showMessage("Enter a valid 6-digit OTP.");
+
+            return;
+
+        }
+
+        const button = document.getElementById("verifyOtpBtn");
+
+        button.disabled = true;
+        button.textContent = "Verifying...";
+
+        const callbackName =
+            "beejaOtpCallback_" + Date.now();
+
+        const params = new URLSearchParams();
+
+        params.append("action", "verifyOtp");
+        params.append("email", email);
+        params.append("otp", otp);
+        params.append("callback", callbackName);
+
+        const script = document.createElement("script");
+
+        script.src = GOOGLE_SCRIPT_URL + "?" + params.toString();
+
+        let completed = false;
+
+        function cleanup() {
+
+            delete window[callbackName];
+
+            script.remove();
+
+            button.disabled = false;
+            button.textContent = "Verify OTP";
+
+        }
+
+        window[callbackName] = function(result) {
+
+            completed = true;
+
+            cleanup();
+
+            if (result.success) {
+
+                verifiedEmail = email;
+
+                document.getElementById("otpVerifyStep").hidden = true;
+
+                document.getElementById("newPasswordStep").hidden = false;
+
+                document.getElementById("forgotDescription").textContent =
+                    "OTP verified. Create your new password.";
+
+                showMessage(
+                    "Email verified successfully!",
+                    "#278b45"
+                );
+
+            } else {
+
+                showMessage("Invalid or expired OTP.");
+
+            }
+
+        };
+
+        script.onerror = function() {
+
+            if (completed) return;
+
+            cleanup();
+
+            showMessage(
+                "OTP verification failed. Please try again."
+            );
+
+        };
+
+        document.body.appendChild(script);
+
+    });
+
+
+// =======================================
+// SAVE NEW PASSWORD
+// =======================================
+
+document.getElementById("saveNewPasswordBtn")
+    .addEventListener("click", function() {
+
+        const newPassword =
+            document.getElementById("newPassword").value;
+
+        const confirmPassword =
+            document.getElementById("confirmPassword").value;
+
+        if (!verifiedEmail) {
+
+            showMessage("Please verify your email first.");
+
+            return;
+
+        }
+
+        if (newPassword.length < 8) {
+
+            showMessage("Password must contain at least 8 characters.");
+
+            return;
+
+        }
+
+        if (newPassword !== confirmPassword) {
+
+            showMessage("Passwords do not match.");
+
+            return;
+
+        }
+
+        // Find account in this browser
+
+        let users = getUsers();
+
+        const user = users.find(item =>
+            item.email === verifiedEmail
+        );
+
+        if (!user) {
+
+            showMessage(
+                "This demo account is not available in this browser."
+            );
+
+            return;
+
+        }
+
+        // Update demo password
+
+        user.password = newPassword;
+
+        saveUsers(users);
+
+        // Log out old session
+
+        localStorage.removeItem(CURRENT_USER_KEY);
+
+        // Clear form
+
+        document.getElementById("newPassword").value = "";
+
+        document.getElementById("confirmPassword").value = "";
+
+        verifiedEmail = "";
+
+        showLoginPage();
+
+        alert("Password changed successfully! Please login.");
+
+    });
+
+
+// =======================================
+// BACK TO LOGIN
+// =======================================
+
+backToLogin.addEventListener("click", function(e) {
+
+    e.preventDefault();
+
+    verifiedEmail = "";
+
+    showLoginPage();
 
 });
+
 
 // =======================================
 // SHOW LOGIN PAGE
@@ -386,6 +677,7 @@ function showLoginPage() {
 
     registerForm.hidden = true;
     loginForm.hidden = false;
+    forgotForm.hidden = true;
 
     loginForm.reset();
 
