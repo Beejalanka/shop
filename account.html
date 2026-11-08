@@ -80,28 +80,99 @@
 
             </form>
 
-            <!-- FORGOT PASSWORD FORM -->
+         
+<!-- FORGOT PASSWORD FORM -->
 
 <form id="forgotForm" hidden>
 
-    <h2>Forgot Password?</h2>
+    <h2>Reset Your Password</h2>
 
-    <p>Enter your registered email address.</p>
+    <p id="forgotDescription">
+        Enter your registered email address.
+    </p>
 
-    <div class="form-group">
+    <!-- STEP 1: EMAIL -->
 
-        <label>Email Address</label>
+    <div id="otpEmailStep">
 
-        <input type="email"
-               id="forgotEmail"
-               placeholder="Enter your email"
-               required>
+        <div class="form-group">
+            <label>Email Address</label>
+
+            <input type="email"
+                   id="forgotEmail"
+                   placeholder="Enter registered email"
+                   required>
+        </div>
+
+        <button type="button"
+                id="sendOtpBtn"
+                class="auth-button">
+            Send OTP
+        </button>
 
     </div>
 
-    <button type="submit" class="auth-button">
-        Reset Password
-    </button>
+
+    <!-- STEP 2: OTP -->
+
+    <div id="otpVerifyStep" hidden>
+
+        <div class="form-group">
+            <label>Enter 6-Digit OTP</label>
+
+            <input type="text"
+                   id="otpCode"
+                   placeholder="Enter OTP"
+                   inputmode="numeric"
+                   maxlength="6"
+                   pattern="[0-9]{6}">
+        </div>
+
+        <button type="button"
+                id="verifyOtpBtn"
+                class="auth-button">
+            Verify OTP
+        </button>
+
+        <button type="button"
+                id="resendOtpBtn"
+                class="cancel-button">
+            Resend OTP
+        </button>
+
+    </div>
+
+
+    <!-- STEP 3: NEW PASSWORD -->
+
+    <div id="newPasswordStep" hidden>
+
+        <div class="form-group">
+            <label>New Password</label>
+
+            <input type="password"
+                   id="newPassword"
+                   minlength="8"
+                   placeholder="Enter new password">
+        </div>
+
+        <div class="form-group">
+            <label>Confirm Password</label>
+
+            <input type="password"
+                   id="confirmPassword"
+                   minlength="8"
+                   placeholder="Confirm new password">
+        </div>
+
+        <button type="button"
+                id="saveNewPasswordBtn"
+                class="auth-button">
+            Save New Password
+        </button>
+
+    </div>
+
 
     <p class="switch-text">
         Remember your password?
@@ -109,6 +180,7 @@
     </p>
 
 </form>
+
 
             <!-- REGISTER FORM -->
             <form id="registerForm" hidden>
