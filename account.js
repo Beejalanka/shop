@@ -339,9 +339,6 @@ forgotPasswordLink.addEventListener("click", function(e) {
 });
 
 
-// =======================================
-// SEND OTP
-// =======================================
 
 async function sendPasswordOtp() {
 
@@ -352,10 +349,9 @@ async function sendPasswordOtp() {
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
 
-        showMessage("Please enter a valid email address.");
+        showMessage("Please enter a valid email.");
 
         return;
-
     }
 
     const button = document.getElementById("sendOtpBtn");
@@ -363,48 +359,87 @@ async function sendPasswordOtp() {
     button.disabled = true;
     button.textContent = "Sending OTP...";
 
-    try {
+    const callbackName = "beejaSendOTP_" + Date.now();
 
-        const formData = new URLSearchParams();
+    const params = new URLSearchParams();
 
-        formData.append("action", "sendOtp");
-        formData.append("email", email);
+    params.append("action", "sendOtp");
+    params.append("email", email);
+    params.append("callback", callbackName);
 
-        await fetch(GOOGLE_SCRIPT_URL, {
-            method: "POST",
-            mode: "no-cors",
-            body: formData
-        });
+    const script = document.createElement("script");
 
-        // no-cors cannot read the Apps Script response.
-        // Show a generic message to avoid revealing account existence.
+    script.src = GOOGLE_SCRIPT_URL + "?" + params.toString();
 
-        document.getElementById("otpEmailStep").hidden = true;
+    let completed = false;
 
-        document.getElementById("otpVerifyStep").hidden = false;
+    function cleanup() {
 
-        document.getElementById("forgotDescription").textContent =
-            "If this email is registered, an OTP will arrive shortly.";
+        delete window[callbackName];
 
-        showMessage(
-            "Check your email for the 6-digit OTP.",
-            "#278b45"
-        );
-
-        startOtpResendTimer();
-
-    } catch (error) {
-
-        console.error(error);
-
-        showMessage("Unable to send OTP. Please try again.");
+        script.remove();
 
         button.disabled = false;
         button.textContent = "Send OTP";
-
     }
 
+    window[callbackName] = function(result) {
+
+        completed = true;
+
+        cleanup();
+
+        if (result.success) {
+
+            document.getElementById("otpEmailStep").hidden = true;
+
+            document.getElementById("otpVerifyStep").hidden = false;
+
+            document.getElementById("forgotDescription").textContent =
+                "Enter the OTP sent to your email.";
+
+            showMessage(
+                "OTP sent successfully! Check your inbox.",
+                "#278b45"
+            );
+
+            startOtpResendTimer();
+
+        } else {
+
+            showMessage(result.message || "Unable to send OTP.");
+
+        }
+    };
+
+    script.onerror = function() {
+
+        if (completed) return;
+
+        cleanup();
+
+        showMessage("Google Apps Script connection failed.");
+
+    };
+
+    document.body.appendChild(script);
+
+    // Prevent endless waiting
+
+    setTimeout(function() {
+
+        if (!completed) {
+
+            cleanup();
+
+            showMessage("Request timed out. Please try again.");
+
+        }
+
+    }, 20000);
+
 }
+
 
 
 // =======================================
