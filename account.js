@@ -626,37 +626,50 @@ sendOtpBtn.addEventListener("click", function() {
 // OTP RESEND TIMER
 // =======================================
 
+let otpResendTimer = null;
+
 function startOtpResendTimer() {
 
-    stopOtpResendTimer();
+    const resendBtn = document.getElementById("resendOtpBtn");
 
-    let seconds = 60;
+    if (!resendBtn) return;
 
-    resendOtpBtn.disabled = true;
+    // Clear previous timer
+    if (otpResendTimer) {
+        clearInterval(otpResendTimer);
+    }
 
-    resendOtpBtn.textContent =
-        "Resend OTP (" + seconds + "s)";
+    let remaining = 60;
 
+    // Keep button visible
+    resendBtn.style.display = "block";
+    resendBtn.hidden = false;
 
-    resendTimer = setInterval(function() {
+    resendBtn.disabled = true;
+    resendBtn.textContent = `Resend OTP (${remaining}s)`;
 
-        seconds--;
+    otpResendTimer = setInterval(() => {
 
-        if (seconds <= 0) {
+        remaining--;
 
-            stopOtpResendTimer();
+        if (remaining > 0) {
 
-            return;
+            resendBtn.textContent = `Resend OTP (${remaining}s)`;
 
+        } else {
+
+            clearInterval(otpResendTimer);
+            otpResendTimer = null;
+
+            // Enable button after 60 seconds
+            resendBtn.style.display = "block";
+            resendBtn.hidden = false;
+            resendBtn.disabled = false;
+            resendBtn.textContent = "Resend OTP";
         }
 
-        resendOtpBtn.textContent =
-            "Resend OTP (" + seconds + "s)";
-
     }, 1000);
-
 }
-
 
 // =======================================
 // RESEND OTP
