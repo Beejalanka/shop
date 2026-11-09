@@ -725,3 +725,26 @@ footer {
         grid-template-columns: 1fr;
     }
 }
+
+#topBtn{
+    position:fixed;
+    bottom:100px;
+    right:25px;
+    width:55px;
+    height:55px;
+    border:none;
+    border-radius:50%;
+    background:#38bdf8;
+    color:#111827;
+    font-size:22px;
+    cursor:pointer;
+    display:none;
+    z-index:999;
+    box-shadow:0 5px 15px rgba(0,0,0,.3);
+}
+
+#topBtn:hover{
+    background:#0ea5e9;
+    color:white;
+}
+
