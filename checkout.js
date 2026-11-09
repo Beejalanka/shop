@@ -1,4 +1,4 @@
-```javascript
+
 // =====================================
 // BEEJA.LK CHECKOUT SYSTEM
 // =====================================
@@ -273,4 +273,185 @@ checkoutForm.addEventListener("submit", function (e) {
 
     // CHECK WHATSAPP NUMBER
 
-    if (!/^94[0-9]{9}$/.test(WHATSAPP
+    if (!/^94[0-9]{9}$/.test(WHATSAPP_NUMBER)) {
+
+        alert("Invalid WhatsApp number.");
+
+        return;
+
+    }
+
+
+    // CALCULATE TOTAL
+
+    const subtotal = calculateSubtotal();
+
+    const delivery = DELIVERY_FEE;
+
+    const finalTotal = subtotal + delivery;
+
+
+    // =====================================
+    // CREATE WHATSAPP MESSAGE
+    // =====================================
+
+    let message = "";
+
+    message += "🛒 *BEEJA.LK NEW ORDER*\n";
+
+    message += "--------------------------\n\n";
+
+
+    // CUSTOMER DETAILS
+
+    message += "*CUSTOMER DETAILS*\n";
+
+    message += "Name: " + customerName + "\n";
+
+    message += "Phone: " + phone + "\n";
+
+    message += "Address: " + address + "\n";
+
+    message += "City: " + city + "\n\n";
+
+
+    // ORDER PRODUCTS
+
+    message += "*ORDER PRODUCTS*\n\n";
+
+
+    cart.forEach((item, index) => {
+
+        const price = Number(item.price) || 0;
+
+        const quantity = Number(item.quantity) || 1;
+
+        const total = price * quantity;
+
+
+        message += (index + 1) + ". " + (item.name || "Product") + "\n";
+
+        message += "Quantity: " + quantity + "\n";
+
+        message += "Price: " + formatPrice(price) + "\n";
+
+        message += "Total: " + formatPrice(total) + "\n\n";
+
+    });
+
+
+    // ORDER SUMMARY
+
+    message += "--------------------------\n";
+
+    message += "Subtotal: " + formatPrice(subtotal) + "\n";
+
+    message += "Delivery: " + formatPrice(delivery) + "\n";
+
+    message += "*FINAL TOTAL: " + formatPrice(finalTotal) + "*\n\n";
+
+
+    // PAYMENT METHOD
+
+    message += "*PAYMENT METHOD*\n";
+
+    message += payment + "\n\n";
+
+
+    if (payment === "Bank Transfer") {
+
+        message += "I will make the bank transfer and send the payment receipt.";
+
+    } else {
+
+        message += "I prefer Cash on Delivery.";
+
+    }
+
+
+    // =====================================
+    // OPEN WHATSAPP
+    // =====================================
+
+    const whatsappURL =
+        "https://wa.me/" + WHATSAPP_NUMBER +
+        "?text=" + encodeURIComponent(message);
+
+
+    // OPEN WHATSAPP WINDOW
+
+    const whatsappWindow = window.open(
+        whatsappURL,
+        "_blank"
+    );
+
+
+    // =====================================
+    // CLEAR CART AFTER WHATSAPP OPENS
+    // =====================================
+
+    if (whatsappWindow) {
+
+        // CLEAR LOCAL CART
+
+        cart = [];
+
+        localStorage.removeItem(CART_KEY);
+
+
+        // UPDATE CHECKOUT DISPLAY
+
+        displayCheckout();
+
+
+        // SUCCESS MESSAGE
+
+        alert(
+            "Your order message is ready!\n\n" +
+            "Please send your order through WhatsApp."
+        );
+
+
+        // REDIRECT TO HOME PAGE
+
+        setTimeout(function () {
+
+            window.location.href = "index.html";
+
+        }, 2000);
+
+
+    } else {
+
+        alert(
+            "WhatsApp could not open.\n\n" +
+            "Please allow pop-ups in your browser and try again."
+        );
+
+    }
+
+});
+
+
+// =====================================
+// UPDATE WHEN OTHER TAB CHANGES CART
+// =====================================
+
+window.addEventListener("storage", function (e) {
+
+    if (e.key === CART_KEY) {
+
+        cart = JSON.parse(e.newValue) || [];
+
+        displayCheckout();
+
+    }
+
+});
+
+
+// =====================================
+// INITIAL LOAD
+// =====================================
+
+displayCheckout();
