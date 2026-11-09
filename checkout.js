@@ -1,16 +1,14 @@
+```javascript
 // =====================================
 // BEEJA.LK CHECKOUT SYSTEM
 // =====================================
+
 
 // CART SETTINGS
 
 const CART_KEY = "freshmartCart";
 
 const DELIVERY_FEE = 500;
-
-// IMPORTANT:
-// Replace this with your Beeja.LK WhatsApp number.
-// Sri Lankan number format: 947XXXXXXXX
 
 const WHATSAPP_NUMBER = "94764960463";
 
@@ -37,7 +35,9 @@ const bankDetails = document.getElementById("bankDetails");
 const placeOrderBtn = document.getElementById("placeOrderBtn");
 
 
+// =====================================
 // FORMAT PRICE
+// =====================================
 
 function formatPrice(price) {
 
@@ -49,7 +49,9 @@ function formatPrice(price) {
 }
 
 
+// =====================================
 // CALCULATE SUBTOTAL
+// =====================================
 
 function calculateSubtotal() {
 
@@ -63,7 +65,9 @@ function calculateSubtotal() {
 }
 
 
-// DISPLAY ORDER
+// =====================================
+// DISPLAY CHECKOUT PRODUCTS
+// =====================================
 
 function displayCheckout() {
 
@@ -73,7 +77,10 @@ function displayCheckout() {
 
         checkoutItems.innerHTML = `
             <p>Your cart is empty.</p>
-            <a href="index.html">Continue Shopping</a>
+
+            <a href="index.html">
+                Continue Shopping
+            </a>
         `;
 
         checkoutSubtotal.textContent = formatPrice(0);
@@ -118,7 +125,9 @@ function displayCheckout() {
         img.alt = item.name || "Product";
 
         img.onerror = function () {
+
             this.style.display = "none";
+
         };
 
 
@@ -128,9 +137,11 @@ function displayCheckout() {
 
         info.className = "checkout-product-info";
 
+
         const name = document.createElement("h4");
 
         name.textContent = item.name || "Product";
+
 
         const qty = document.createElement("p");
 
@@ -197,7 +208,7 @@ document.querySelectorAll('input[name="payment"]').forEach(radio => {
 
 
 // =====================================
-// PLACE ORDER
+// PLACE ORDER VIA WHATSAPP
 // =====================================
 
 checkoutForm.addEventListener("submit", function (e) {
@@ -235,131 +246,31 @@ checkoutForm.addEventListener("submit", function (e) {
 
     // PAYMENT METHOD
 
-    const payment =
-        document.querySelector('input[name="payment"]:checked').value;
+    const selectedPayment =
+        document.querySelector('input[name="payment"]:checked');
+
+    if (!selectedPayment) {
+
+        alert("Please select a payment method.");
+
+        return;
+
+    }
+
+    const payment = selectedPayment.value;
 
 
     // VALIDATE PHONE
 
     if (!/^0[0-9]{9}$/.test(phone)) {
 
-        alert("Please enter a valid 10-digit Sri Lankan mobile number.");
+        alert("Please enter a valid 10-digit mobile number.");
 
         return;
-
-    }
-
-
-    // CALCULATE TOTAL
-
-    const subtotal = calculateSubtotal();
-
-    const delivery = DELIVERY_FEE;
-
-    const finalTotal = subtotal + delivery;
-
-
-    // CREATE ORDER MESSAGE
-
-    let message = "";
-
-    message += "🛒 *BEEJA.LK NEW ORDER*%0A";
-
-    message += "--------------------------%0A%0A";
-
-
-    message += "*CUSTOMER DETAILS*%0A";
-
-    message += "Name: " + encodeURIComponent(customerName) + "%0A";
-
-    message += "Phone: " + encodeURIComponent(phone) + "%0A";
-
-    message += "Address: " + encodeURIComponent(address) + "%0A";
-
-    message += "City: " + encodeURIComponent(city) + "%0A%0A";
-
-
-    message += "*ORDER PRODUCTS*%0A";
-
-
-    cart.forEach((item, index) => {
-
-        const price = Number(item.price) || 0;
-
-        const quantity = Number(item.quantity) || 1;
-
-        const total = price * quantity;
-
-
-        message += (index + 1) + ". ";
-
-        message += encodeURIComponent(item.name || "Product");
-
-        message += "%0A";
-
-        message += "Qty: " + quantity + "%0A";
-
-        message += "Price: " + encodeURIComponent(formatPrice(price));
-
-        message += "%0A";
-
-        message += "Total: " + encodeURIComponent(formatPrice(total));
-
-        message += "%0A%0A";
-
-    });
-
-
-    message += "--------------------------%0A";
-
-    message += "Subtotal: " + encodeURIComponent(formatPrice(subtotal)) + "%0A";
-
-    message += "Delivery: " + encodeURIComponent(formatPrice(delivery)) + "%0A";
-
-    message += "*FINAL TOTAL: " + encodeURIComponent(formatPrice(finalTotal)) + "*%0A%0A";
-
-
-    message += "Payment Method: " + encodeURIComponent(payment) + "%0A%0A";
-
-
-    if (payment === "Bank Transfer") {
-
-        message += "I will make the bank transfer and send the payment receipt.";
-
-    } else {
-
-        message += "I prefer Cash on Delivery.";
 
     }
 
 
     // CHECK WHATSAPP NUMBER
 
-    if (!/^94[0-9]{9}$/.test(WHATSAPP_NUMBER)) {
-
-        alert("Please configure your Beeja.LK WhatsApp number in checkout.js");
-
-        return;
-
-    }
-
-
-    // OPEN WHATSAPP
-
-    const whatsappURL =
-        "https://wa.me/" + WHATSAPP_NUMBER +
-        "?text=" + message;
-
-
-    window.open(whatsappURL, "_blank");
-
-
-    alert("Your order message is ready. Please send it through WhatsApp.");
-
-});
-
-// =====================================
-// INITIAL LOAD
-// =====================================
-
-displayCheckout();
+    if (!/^94[0-9]{9}$/.test(WHATSAPP
