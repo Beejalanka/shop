@@ -1,0 +1,195 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Checkout - Beeja.LK</title>
+
+    <link rel="stylesheet" href="checkout.css">
+</head>
+
+<body>
+
+<header class="checkout-header">
+
+    <a href="index.html" class="logo">
+        <img src="images/logo.png" alt="Beeja.LK">
+    </a>
+
+    <a href="cart.html" class="back-btn">
+        ← Back to Cart
+    </a>
+
+</header>
+
+
+<main class="checkout-container">
+
+    <h1>Checkout</h1>
+
+    <p class="subtitle">Complete your order details below.</p>
+
+    <div class="checkout-layout">
+
+        <!-- CUSTOMER DETAILS -->
+
+        <section class="customer-details">
+
+            <h2>Delivery Information</h2>
+
+            <form id="checkoutForm">
+
+                <div class="form-group">
+                    <label for="customerName">Full Name *</label>
+
+                    <input
+                        type="text"
+                        id="customerName"
+                        placeholder="Enter your full name"
+                        required>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="phone">Mobile Number *</label>
+
+                    <input
+                        type="tel"
+                        id="phone"
+                        placeholder="07XXXXXXXX"
+                        pattern="0[0-9]{9}"
+                        maxlength="10"
+                        required>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="address">Delivery Address *</label>
+
+                    <textarea
+                        id="address"
+                        rows="3"
+                        placeholder="Enter your delivery address"
+                        required></textarea>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="city">City *</label>
+
+                    <input
+                        type="text"
+                        id="city"
+                        placeholder="Enter your city"
+                        required>
+                </div>
+
+
+                <h2 class="payment-heading">Payment Method</h2>
+
+                <div class="payment-option">
+
+                    <label>
+                        <input
+                            type="radio"
+                            name="payment"
+                            value="Cash on Delivery"
+                            checked>
+
+                        Cash on Delivery
+                    </label>
+
+                </div>
+
+
+                <div class="payment-option">
+
+                    <label>
+                        <input
+                            type="radio"
+                            name="payment"
+                            value="Bank Transfer">
+
+                        Bank Transfer
+                    </label>
+
+                </div>
+
+
+                <!-- BANK DETAILS -->
+
+                <div id="bankDetails" class="bank-details" hidden>
+
+                    <h3>Bank Account Details</h3>
+
+                    <p>Bank: TEST</p>
+
+                    <p>Account Name: TEST NAME</p>
+
+                    <p>Account Number: 11111111</p>
+
+                    <p>Branch: MAHO </p>
+
+                    <small>
+                        Please transfer the payment and send your payment
+                        receipt through WhatsApp.
+                    </small>
+
+                </div>
+
+
+                <button type="submit" id="placeOrderBtn">
+                    Place Order via WhatsApp
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- ORDER SUMMARY -->
+
+        <aside class="order-summary">
+
+            <h2>Your Order</h2>
+
+            <div id="checkoutItems"></div>
+
+            <hr>
+
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <strong id="checkoutSubtotal">Rs. 0.00</strong>
+            </div>
+
+            <div class="summary-row">
+                <span>Delivery Fee</span>
+                <strong id="deliveryFee">Rs. 500.00</strong>
+            </div>
+
+            <hr>
+
+            <div class="summary-row total-row">
+                <span>Total</span>
+                <strong id="checkoutTotal">Rs. 500.00</strong>
+            </div>
+
+            <p class="secure-text">
+                🔒 Secure Shopping at Beeja.LK
+            </p>
+
+        </aside>
+
+    </div>
+
+</main>
+
+
+<script src="checkout.js"></script>
+
+</body>
+</html>
+```
