@@ -344,19 +344,47 @@ checkoutForm.addEventListener("submit", function (e) {
     }
 
 
-    // OPEN WHATSAPP
+// =====================================
+// OPEN WHATSAPP & CLEAR CART
+// =====================================
 
-    const whatsappURL =
-        "https://wa.me/" + WHATSAPP_NUMBER +
-        "?text=" + message;
+const whatsappURL =
+    "https://wa.me/" + WHATSAPP_NUMBER +
+    "?text=" + message;
 
 
-    window.open(whatsappURL, "_blank");
+// OPEN WHATSAPP
+
+const whatsappWindow = window.open(whatsappURL, "_blank");
 
 
-    alert("Your order message is ready. Please send it through WhatsApp.");
+// CHECK WHATSAPP OPENED
 
-});
+if (whatsappWindow) {
+
+    // CLEAR CART
+
+    cart = [];
+
+    localStorage.removeItem(CART_KEY);
+
+    // UPDATE CART DISPLAY
+
+    alert("Order message is ready! Please send your order through WhatsApp.");
+
+    // REDIRECT AFTER 2 SECONDS
+
+    setTimeout(function () {
+
+        window.location.href = "index.html";
+
+    }, 2000);
+
+} else {
+
+    alert("Please allow pop-ups to open WhatsApp.");
+
+}
 
 
 // =====================================
