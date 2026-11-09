@@ -564,27 +564,62 @@ document.querySelectorAll(".category-card")
 });
 
 // ======================================
-// SEARCH
+// SEARCH - BUTTON CLICK OR ENTER KEY
 // ======================================
 
 const searchInput =
     document.getElementById("searchInput");
 
+const searchBtn =
+    document.getElementById("searchBtn");
+
 function searchProducts() {
 
-    searchText = searchInput.value
+    // Get search text
+    searchText = (searchInput?.value || "")
         .trim()
         .toLowerCase();
 
+    // Display matching products
     displayProducts();
+
+    // Scroll to products
+    document.getElementById("products")
+        ?.scrollIntoView({
+            behavior: "smooth"
+        });
 
 }
 
-document.getElementById("searchBtn")
-    ?.addEventListener("click", searchProducts);
 
-searchInput?.addEventListener("input", searchProducts);
+// ======================================
+// SEARCH BUTTON CLICK
+// ======================================
 
+searchBtn?.addEventListener("click", function(event) {
+
+    event.preventDefault();
+
+    searchProducts();
+
+});
+
+
+// ======================================
+// SEARCH USING ENTER KEY
+// ======================================
+
+searchInput?.addEventListener("keydown", function(event) {
+
+    if (event.key === "Enter") {
+
+        event.preventDefault();
+
+        searchProducts();
+
+    }
+
+});
 // ======================================
 // SORT PRODUCTS
 // ======================================
